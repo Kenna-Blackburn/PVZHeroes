@@ -20,7 +20,7 @@ func client() async throws {
     }
 
     struct DebugCard1: Card {
-        var body: some ComponentGroup {
+        var components: [any ComponentGroup] {
             GUID(42)
             PrefabID("E621E1F8-C36C-495A-93FC-0C247A3E6E5F")
             

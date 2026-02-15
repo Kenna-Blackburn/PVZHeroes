@@ -2,36 +2,29 @@
 //  ComponentGroup.swift
 //  PVZHeroes
 //
-//  Created by Kenna Blackburn on 2/14/26.
+//  Created by Kenna Blackburn on 2/15/26.
 //
 
 import Foundation
+import Helpers
 
-public protocol ComponentGroup {
-    associatedtype Body: ComponentGroup
-    
-    func compile(into resolved: inout Card.Resolved)
-    
-    @ComponentGroupBuilder // TODO: replace with `ArrayBuilder<any ComponentGroup>`?
-    var body: Body { get }
+public protocol ComponentGroup: EnginePieceGroup {
+    @ArrayBuilder<any ComponentGroup>
+    var components: [any ComponentGroup] { get }
 }
 
 extension ComponentGroup {
     public func compile(into resolved: inout Card.Resolved) {
-        return body.compile(into: &resolved)
+        components.forEach({ $0.compile(into: &resolved) })
     }
+}
+
+public typealias RawComponent = RawEnginePiece
+
+extension RawComponent: ComponentGroup {
+    public var components: [any ComponentGroup] {}
 }
 
 public enum ComponentGroups {
     
-}
-
-extension Never: ComponentGroup {
-    public func compile(into resolved: inout Card.Resolved) {
-        fatalError()
-    }
-    
-    public var body: some ComponentGroup {
-        fatalError()
-    }
 }
