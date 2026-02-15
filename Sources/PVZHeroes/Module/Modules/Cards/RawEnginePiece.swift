@@ -1,5 +1,5 @@
 //
-//  RawComponent.swift
+//  RawEnginePiece.swift
 //  PVZHeroes
 //
 //  Created by Kenna Blackburn on 2/14/26.
@@ -8,8 +8,7 @@
 import Foundation
 import Helpers
 
-// TODO: replace with `var compile: (inout Card.Resolved) -> Void; var shouldEncode: Bool`?
-public enum RawComponent: Encodable, ComponentGroup {
+public enum RawEnginePiece: Encodable, EnginePieceGroup {
     case encodable(type: String, data: [String: Any])
     case sideEffect((inout Card.Resolved) -> Void)
     
@@ -59,6 +58,4 @@ public enum RawComponent: Encodable, ComponentGroup {
             break
         }
     }
-    
-    public var body: some ComponentGroup {}
 }

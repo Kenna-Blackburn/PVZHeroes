@@ -7,6 +7,52 @@
 
 import Foundation
 
+// MARK: GUID
+extension ComponentGroups {
+    public struct GUID: ComponentGroup {
+        public var guid: Int
+        
+        public init(_ guid: Int) {
+            self.guid = guid
+        }
+        
+        public var components: [any ComponentGroup] {
+            RawComponent("Components.Card", [
+                "Guid": guid,
+            ])
+            
+            RawComponent { resolved in
+                resolved.guid = guid
+            }
+        }
+    }
+}
+
+extension ComponentGroup {
+    public typealias GUID = ComponentGroups.GUID
+}
+
+// MARK: PrefabID
+extension ComponentGroups {
+    public struct PrefabID: ComponentGroup {
+        public var prefabID: String
+        
+        public init(_ prefabID: String) {
+            self.prefabID = prefabID
+        }
+        
+        public var components: [any ComponentGroup] {
+            RawComponent { resolved in
+                resolved.prefabID = prefabID
+            }
+        }
+    }
+}
+
+extension ComponentGroup {
+    public typealias PrefabID = ComponentGroups.PrefabID
+}
+
 // MARK: Cost
 extension ComponentGroups {
     public struct Cost: ComponentGroup {
@@ -16,7 +62,7 @@ extension ComponentGroups {
             self.cost = cost
         }
         
-        public var body: some ComponentGroup {
+        public var components: [any ComponentGroup] {
             RawComponent("Components.SunCost", [
                 "SunCostValue": [
                     "BaseValue": cost,
@@ -43,7 +89,7 @@ extension ComponentGroups {
             self.strength = strength
         }
         
-        public var body: some ComponentGroup {
+        public var components: [any ComponentGroup] {
             RawComponent("Components.Attack", [
                 "AttackValue": [
                     "BaseValue": strength,
@@ -70,7 +116,7 @@ extension ComponentGroups {
             self.health = health
         }
         
-        public var body: some ComponentGroup {
+        public var components: [any ComponentGroup] {
             RawComponent("Components.Health", [
                 "HealthValue": [
                     "BaseValue": health,
@@ -101,7 +147,7 @@ extension ComponentGroups {
             self.health = health
         }
         
-        public var body: some ComponentGroup {
+        public var components: [any ComponentGroup] {
             Strength(strength)
             Health(health)
         }
@@ -111,275 +157,3 @@ extension ComponentGroups {
 extension ComponentGroup {
     public typealias Stats = ComponentGroups.Stats
 }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var body: some ComponentGroup {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
