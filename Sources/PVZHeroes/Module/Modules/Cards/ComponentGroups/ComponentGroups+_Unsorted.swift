@@ -6,6 +6,47 @@
 //
 
 import Foundation
+import Helpers
+
+public struct Counters: Encodable {
+    public var isPersistent: Bool
+    public var counters: [Counter]
+    
+    public init(
+        isPersistent: Bool = true,
+        counters: [Counter] = [.init()],
+    ) {
+        self.isPersistent = isPersistent
+        self.counters = counters
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case isPersistent = "IsPersistent"
+        case counters = "Counters"
+    }
+    
+    public struct Counter: Encodable {
+        public var sourceID: Int
+        public var value: Int
+        public var duration: Int
+        
+        public init(
+            sourceID: Int = -1,
+            value: Int = 0,
+            duration: Int = 0,
+        ) {
+            self.sourceID = sourceID
+            self.value = value
+            self.duration = duration
+        }
+        
+        private enum CodingKeys: String, CodingKey {
+            case sourceID = "SourceId"
+            case value = "Value"
+            case duration = "Duration"
+        }
+    }
+}
 
 // MARK: GUID
 extension ComponentGroups {
@@ -158,6 +199,133 @@ extension ComponentGroup {
     public typealias Stats = ComponentGroups.Stats
 }
 
+// MARK: HealthAttack
+extension ComponentGroups {
+    public struct HealthAttack: ComponentGroup {
+        public var counters: Counters
+        
+        public init(counters: Counters = .init(counters: [.init(value: 2)])) {
+            self.counters = counters
+        }
+        
+        public var components: [any ComponentGroup] {
+            RawComponent("Components.AttackOverride", [
+                "Counters": counters,
+            ])
+        }
+    }
+}
+
+extension ComponentGroup {
+    public typealias HealthAttack = ComponentGroups.HealthAttack
+}
+
+// MARK: UniqueAbilities
+extension ComponentGroups {
+    public struct UniqueAbilities: ComponentGroup {
+        public var children: [any Trigger]
+        
+        public init(children: [any Trigger]) {
+            self.children = children
+        }
+        
+        public init(
+            @ArrayBuilder<any Trigger> _ children: () -> [any Trigger],
+        ) {
+            self.init(children: children())
+        }
+        
+        public var components: [any ComponentGroup] {
+            RawComponent("Components.EffectEntitiesDescriptor", [
+                "entities": children.enumerated().map { (i, child) in
+                    let components = AnyEnginePieceGroup {
+                        RawComponent("Components.EffectEntityGrouping", [
+                            "AbilityGroupId": i,
+                        ])
+                        
+                        child
+                    }
+                    
+                    var resolved = Card.Resolved()
+                    components.compile(into: &resolved)
+                    
+                    return [
+                        "components": resolved.components,
+                    ]
+                }
+            ])
+        }
+    }
+}
+
+extension ComponentGroup {
+    public typealias UniqueAbilities = ComponentGroups.UniqueAbilities
+}
+
+public protocol Trigger: ComponentGroup {
+    
+}
+
+public typealias RawTrigger = RawEnginePiece
+
+public enum Triggers {
+    
+}
+
+extension Triggers {
+    public struct OnPlay: Trigger {
+        public var effect: [any ComponentGroup]
+        
+        public init(
+            @ArrayBuilder<any ComponentGroup> _ effect: () -> [any ComponentGroup]
+        ) {
+            self.effect = effect()
+        }
+        
+        public var components: [any ComponentGroup] {
+            RawTrigger("Components.PlayTrigger")
+            
+            effect
+        }
+    }
+}
+
+extension Card {
+    public typealias OnPlay = Triggers.OnPlay
+}
+
+// MARK: ApplyBuff
+extension ComponentGroups {
+    public struct ApplyBuff: ComponentGroup {
+        public var strength: Int
+        public var health: Int
+        public var duration: Duration
+        
+        public init(_ strength: Int, _ health: Int, duration: Duration = .indefinite) {
+            self.strength = strength
+            self.health = health
+            self.duration = duration
+        }
+        
+        public var components: [any ComponentGroup] {
+            RawComponent("Components.BuffEffectDescriptor", [
+                "AttackAmount": strength,
+                "HealthAmount": health,
+                "Duration": duration,
+            ])
+        }
+        
+        public enum Duration: String, Encodable {
+            case indefinite = "Permanent"
+            case untilEndOfTurn = "EndOfTurn"
+        }
+    }
+}
+
+extension ComponentGroup {
+    public typealias ApplyBuff = ComponentGroups.ApplyBuff
+}
+
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -175,10 +343,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -196,10 +360,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -217,10 +377,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -238,10 +394,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -259,10 +411,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -280,10 +428,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -301,10 +445,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -322,10 +462,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -343,10 +479,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {
@@ -364,178 +496,6 @@ extension ComponentGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var components: [any ComponentGroup] {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var components: [any ComponentGroup] {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var components: [any ComponentGroup] {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var components: [any ComponentGroup] {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var components: [any ComponentGroup] {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var components: [any ComponentGroup] {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var components: [any ComponentGroup] {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
-//  // MARK: <#ComponentGroup#>
-//  extension ComponentGroups {
-//      public struct <#ComponentGroup#>: ComponentGroup {
-//          <#data#>
-//
-//          public var components: [any ComponentGroup] {
-//              RawComponent("Components.<#ID#>", [
-//                  <#data#>
-//              ])
-//          }
-//      }
-//  }
-//
-//  extension ComponentGroup {
-//      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
-//  }
-
-//  extension ComponentGroup {
-//      public typealias Stats = ComponentGroups.Stats
-//  }
-//
 //  // MARK: <#ComponentGroup#>
 //  extension ComponentGroups {
 //      public struct <#ComponentGroup#>: ComponentGroup {

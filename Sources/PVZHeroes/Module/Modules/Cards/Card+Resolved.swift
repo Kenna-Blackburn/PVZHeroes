@@ -21,7 +21,7 @@ public struct _Card_Resolved {
     public var strength: Int
     public var health: Int
     
-    private init() {
+    public init() {
         self.components = []
         
         self.guid = 0

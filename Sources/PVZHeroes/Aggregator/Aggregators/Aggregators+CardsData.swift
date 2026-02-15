@@ -21,7 +21,7 @@ extension Aggregators {
                 contents[String(card.guid)] = [
                     "prefabName": card.prefabID,
                     "entity": [
-                        "components": card.components.filter(\.shouldEncode),
+                        "components": card.components,
                     ],
                     "displaySunCost": card.cost,
                     "displayAttack": card.strength,

@@ -12,7 +12,7 @@ public enum RawEnginePiece: Encodable, EnginePieceGroup {
     case encodable(type: String, data: [String: Any])
     case sideEffect((inout Card.Resolved) -> Void)
     
-    public init(_ partialType: String, _ data: [String: Any]) {
+    public init(_ partialType: String, _ data: [String: Any] = [:]) {
         let type = "PvZCards.Engine.\(partialType), EngineLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
         self = .encodable(type: type, data: data)
     }
@@ -21,20 +21,7 @@ public enum RawEnginePiece: Encodable, EnginePieceGroup {
         self = .sideEffect(sideEffect)
     }
     
-    public var shouldEncode: Bool {
-        switch self {
-        case .encodable:
-            return true
-        case .sideEffect:
-            return false
-        }
-    }
-    
     public func encode(to encoder: any Encoder) throws {
-        guard shouldEncode else {
-            return
-        }
-        
         switch self {
         case .encodable(let type, let data):
             let dictionary: [String: Any] = [
@@ -49,13 +36,11 @@ public enum RawEnginePiece: Encodable, EnginePieceGroup {
     }
     
     public func compile(into resolved: inout Card.Resolved) {
-        resolved.components.append(self)
-        
         switch self {
+        case .encodable:
+            resolved.components.append(self)
         case .sideEffect(let sideEffect):
             sideEffect(&resolved)
-        default:
-            break
         }
     }
 }
