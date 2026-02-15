@@ -26,10 +26,10 @@ func client() async throws {
             
             //  Name("Debug Card 1")
             //  Description("This attacks with it's health.")
-            //
-            //  Cost(1)
-            //  Stats(0, 3)
-            //
+            
+            Cost(1)
+            Stats(0, 3)
+            
             //  HealthAttack()
         }
     }

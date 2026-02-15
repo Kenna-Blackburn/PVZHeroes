@@ -27,6 +27,6 @@ extension ComponentGroups {
     }
 }
 
-extension Card {
+extension ComponentGroup {
     public typealias GUID = ComponentGroups.GUID
 }

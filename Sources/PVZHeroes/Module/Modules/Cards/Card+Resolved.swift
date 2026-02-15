@@ -17,10 +17,19 @@ public struct _Card_Resolved {
     public var guid: Int
     public var prefabID: String
     
-    public init() {
+    public var cost: Int
+    public var strength: Int
+    public var health: Int
+    
+    private init() {
         self.components = []
+        
         self.guid = 0
         self.prefabID = ""
+        
+        self.cost = 0
+        self.strength = 0
+        self.health = 0
     }
     
     public init(_ base: any Card) {

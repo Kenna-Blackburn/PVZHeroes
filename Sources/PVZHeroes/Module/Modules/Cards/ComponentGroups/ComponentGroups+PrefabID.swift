@@ -23,6 +23,6 @@ extension ComponentGroups {
     }
 }
 
-extension Card {
+extension ComponentGroup {
     public typealias PrefabID = ComponentGroups.PrefabID
 }

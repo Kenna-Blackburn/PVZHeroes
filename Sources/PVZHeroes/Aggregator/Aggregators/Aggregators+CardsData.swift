@@ -23,6 +23,9 @@ extension Aggregators {
                     "entity": [
                         "components": card.components.filter(\.shouldEncode),
                     ],
+                    "displaySunCost": card.cost,
+                    "displayAttack": card.strength,
+                    "displayHealth": card.health,
                 ]
             }
             
