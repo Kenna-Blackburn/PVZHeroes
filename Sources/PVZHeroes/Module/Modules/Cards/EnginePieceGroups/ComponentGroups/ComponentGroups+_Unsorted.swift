@@ -223,14 +223,14 @@ extension ComponentGroup {
 // MARK: UniqueAbilities
 extension ComponentGroups {
     public struct UniqueAbilities: ComponentGroup {
-        public var children: [any Trigger]
+        public var children: [UniqueAbility]
         
-        public init(children: [any Trigger]) {
+        public init(children: [UniqueAbility]) {
             self.children = children
         }
         
         public init(
-            @ArrayBuilder<any Trigger> _ children: () -> [any Trigger],
+            @ArrayBuilder<UniqueAbility> _ children: () -> [UniqueAbility],
         ) {
             self.init(children: children())
         }
@@ -262,36 +262,48 @@ extension ComponentGroup {
     public typealias UniqueAbilities = ComponentGroups.UniqueAbilities
 }
 
-public protocol Trigger: ComponentGroup {
-    
-}
-
-public typealias RawTrigger = RawEnginePiece
-
-public enum Triggers {
-    
-}
-
-extension Triggers {
-    public struct OnPlay: Trigger {
-        public var effect: [any ComponentGroup]
+extension ComponentGroups.UniqueAbilities {
+    public struct UniqueAbility: ComponentGroup {
+        public var trigger: Trigger
+        public var content: [any ComponentGroup]
         
         public init(
-            @ArrayBuilder<any ComponentGroup> _ effect: () -> [any ComponentGroup]
+            trigger: Trigger,
+            @ArrayBuilder<any ComponentGroup> _ content: () -> [any ComponentGroup],
         ) {
-            self.effect = effect()
+            self.trigger = trigger
+            self.content = content()
         }
         
         public var components: [any ComponentGroup] {
-            RawTrigger("Components.PlayTrigger")
+            RawComponent(trigger.compile)
             
-            effect
+            content
         }
     }
 }
 
-extension Card {
-    public typealias OnPlay = Triggers.OnPlay
+extension ComponentGroup {
+    public typealias UniqueAbility = ComponentGroups.UniqueAbilities.UniqueAbility
+}
+
+extension ComponentGroups.UniqueAbilities.UniqueAbility {
+    public struct Trigger: EnginePieceGroup, Sendable {
+        public var partialID: String
+        
+        public init(_ partialID: String) {
+            self.partialID = partialID
+        }
+        
+        public func compile(into resolved: inout Card.Resolved) {
+            let piece = RawEnginePiece("Components.\(partialID)Trigger")
+            piece.compile(into: &resolved)
+        }
+    }
+}
+
+extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
+    public static let onPlay = Self("Play")
 }
 
 // MARK: ApplyBuff
