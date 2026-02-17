@@ -9,25 +9,25 @@ import Foundation
 import Helpers
 
 public struct AnyEnginePieceGroup: EnginePieceGroup {
-    public var compile: (inout Card.Resolved) -> Void
+    public var _compile: () -> [RawEnginePiece]
     
     public init(
-        _ compile: @escaping (inout Card.Resolved) -> Void,
+        compile: @escaping () -> [RawEnginePiece],
     ) {
-        self.compile = compile
+        self._compile = compile
     }
     
     public init(
-        @ArrayBuilder<any EnginePieceGroup> _ pieces: () -> [any EnginePieceGroup],
+        @ArrayBuilder<any EnginePieceGroup> pieces: () -> [any EnginePieceGroup],
     ) {
         let pieces = pieces()
         
-        self.init { resolved in
-            pieces.forEach({ $0.compile(into: &resolved) })
+        self.init {
+            pieces.flatMap({ $0.compile() })
         }
     }
     
-    public func compile(into resolved: inout Card.Resolved) {
-        compile(&resolved)
+    public func compile() -> [RawEnginePiece] {
+        _compile()
     }
 }

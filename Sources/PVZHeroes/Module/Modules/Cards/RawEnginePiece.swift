@@ -35,6 +35,10 @@ public enum RawEnginePiece: Encodable, EnginePieceGroup {
         }
     }
     
+    public func compile() -> [RawEnginePiece] {
+        return [self]
+    }
+    
     public func compile(into resolved: inout Card.Resolved) {
         switch self {
         case .encodable:
@@ -44,5 +48,3 @@ public enum RawEnginePiece: Encodable, EnginePieceGroup {
         }
     }
 }
-
-

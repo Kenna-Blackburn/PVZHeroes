@@ -25,3 +25,11 @@ public enum ArrayBuilder<Element> {
         return arrays.flatMap({ $0 })
     }
 }
+
+extension Array {
+    public init(
+        @ArrayBuilder<Element> _ build: () -> [Element]
+    ) {
+        self = build()
+    }
+}

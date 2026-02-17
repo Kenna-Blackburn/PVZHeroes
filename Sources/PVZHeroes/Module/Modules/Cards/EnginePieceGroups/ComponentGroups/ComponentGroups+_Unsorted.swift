@@ -238,19 +238,14 @@ extension ComponentGroups {
         public var components: [any ComponentGroup] {
             RawComponent("Components.EffectEntitiesDescriptor", [
                 "entities": children.enumerated().map { (i, child) in
-                    let components = AnyEnginePieceGroup {
-                        RawComponent("Components.EffectEntityGrouping", [
-                            "AbilityGroupId": i,
-                        ])
-                        
-                        child
-                    }
-                    
-                    var resolved = Card.Resolved()
-                    components.compile(into: &resolved)
-                    
-                    return [
-                        "components": resolved.components,
+                    [
+                        "components": AnyEnginePieceGroup.init(pieces: {
+                            RawComponent("Components.EffectEntityGrouping", [
+                                "AbilityGroupId": i,
+                            ])
+                            
+                            child
+                        }).compile(),
                     ]
                 }
             ])
@@ -276,7 +271,7 @@ extension ComponentGroups.UniqueAbilities {
         }
         
         public var components: [any ComponentGroup] {
-            RawComponent(trigger.compile)
+            trigger.compile()
             
             content
         }
@@ -295,9 +290,10 @@ extension ComponentGroups.UniqueAbilities.UniqueAbility {
             self.partialID = partialID
         }
         
-        public func compile(into resolved: inout Card.Resolved) {
-            let piece = RawEnginePiece("Components.\(partialID)Trigger")
-            piece.compile(into: &resolved)
+        public func compile() -> [RawEnginePiece] {
+            Array {
+                RawEnginePiece("Components.\(partialID)Trigger")
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ public struct _Card_Resolved {
     
     public init(_ base: any Card) {
         var resolved = Self()
-        base.compile(into: &resolved)
+        base.compile().forEach({ $0.compile(into: &resolved) })
         self = resolved
     }
 }

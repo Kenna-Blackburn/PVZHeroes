@@ -15,8 +15,8 @@ public protocol ComponentGroup: EnginePieceGroup {
 }
 
 extension ComponentGroup {
-    public func compile(into resolved: inout Card.Resolved) {
-        components.forEach({ $0.compile(into: &resolved) })
+    public func compile() -> [RawEnginePiece] {
+        return components.flatMap({ $0.compile() })
     }
 }
 
@@ -38,8 +38,8 @@ public protocol Query: EnginePieceGroup {
 }
 
 extension Query {
-    public func compile(into resolved: inout Card.Resolved) {
-        query.compile(into: &resolved)
+    public func compile() -> [RawEnginePiece] {
+        query.compile()
     }
 }
 
@@ -69,8 +69,8 @@ public protocol Effect: EnginePieceGroup {
 }
 
 extension Effect {
-    public func compile(into resolved: inout Card.Resolved) {
-        effect.compile(into: &resolved)
+    public func compile() -> [RawEnginePiece] {
+        effect.compile()
     }
 }
 

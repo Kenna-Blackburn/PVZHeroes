@@ -9,11 +9,11 @@ import Foundation
 import Helpers
 
 public protocol EnginePieceGroup {
-    func compile(into resolved: inout Card.Resolved)
+    func compile() -> [RawEnginePiece]
 }
 
 extension Never: EnginePieceGroup {
-    public func compile(into resolved: inout Card.Resolved) {
+    public func compile() -> [RawEnginePiece] {
         fatalError()
     }
 }
