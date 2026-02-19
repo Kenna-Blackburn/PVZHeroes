@@ -11,34 +11,39 @@ import Testing
 
 @Test("Client")
 func client() async throws {
-    struct DebugMod1: Mod {
+    struct MyMod: Mod {
         var modules: [any Module] {
             Cards {
-                DebugCard1()
+                BeserkerWallNut()
             }
         }
     }
-
-    struct DebugCard1: Card {
+    
+    struct BeserkerWallNut: Card {
         var components: [any ComponentGroup] {
-            GUID(42)
-            PrefabID("E621E1F8-C36C-495A-93FC-0C247A3E6E5F")
+            GUID(646)
+            PrefabID("Primal Wall-Nut")
             
-            //Name("Debug Card 1")
-            //Description("This attacks using its [h] instead of its [a].") // TODO: add custom String interpolation? "...\(.health)..."
+            //Name("Beserker Wall-Nut")
+            //Description("""
+            //This attacks using its [h] instead of its [a].
+            //<b>When this does damage:</b> it gets [+1h].
+            //""") // TODO: add custom String interpolation (ie. "...\(.health)...")?
             
-            Cost(1)
-            Stats(0, 3)
+            Cost(4)
+            Stats(0, 4)
             
             HealthAttack()
             
             UniqueAbilities {
                 UniqueAbility(trigger: .onPlay) {
-                    // TODO: this
+                    Guard.TriggerTarget(IsSelf())
+                    
+                    ApplyBuff(0, 1)
                 }
             }
         }
     }
-
-    try DebugMod1().compile(to: .downloadsDirectory.appending(path: "pvzh1"))
+    
+    try MyMod().compile(to: .downloadsDirectory.appending(path: "pvzh1"))
 }

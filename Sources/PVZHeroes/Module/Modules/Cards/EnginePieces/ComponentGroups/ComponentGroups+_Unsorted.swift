@@ -69,7 +69,7 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias GUID = ComponentGroups.GUID
 }
 
@@ -90,7 +90,7 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias PrefabID = ComponentGroups.PrefabID
 }
 
@@ -117,7 +117,7 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias Cost = ComponentGroups.Cost
 }
 
@@ -144,7 +144,7 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias Strength = ComponentGroups.Strength
 }
 
@@ -172,7 +172,7 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias Health = ComponentGroups.Health
 }
 
@@ -195,7 +195,7 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias Stats = ComponentGroups.Stats
 }
 
@@ -216,7 +216,7 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias HealthAttack = ComponentGroups.HealthAttack
 }
 
@@ -253,53 +253,53 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias UniqueAbilities = ComponentGroups.UniqueAbilities
 }
 
 extension ComponentGroups.UniqueAbilities {
     public struct UniqueAbility: ComponentGroup {
         public var trigger: Trigger
-        public var content: [any ComponentGroup]
+        public var pieces: [any EnginePieceGroup] // TODO: strengthen typing
         
         public init(
             trigger: Trigger,
-            @ArrayBuilder<any ComponentGroup> _ content: () -> [any ComponentGroup],
+            @ArrayBuilder<any EnginePieceGroup> _ pieces: () -> [any EnginePieceGroup],
         ) {
             self.trigger = trigger
-            self.content = content()
+            self.pieces = pieces()
         }
         
         public var components: [any ComponentGroup] {
             trigger.compile()
-            
-            content
+            pieces.flatMap({ $0.compile() })
         }
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias UniqueAbility = ComponentGroups.UniqueAbilities.UniqueAbility
 }
 
 extension ComponentGroups.UniqueAbilities.UniqueAbility {
     public struct Trigger: EnginePieceGroup, Sendable {
-        public var partialID: String
+        public var id: String
         
-        public init(_ partialID: String) {
-            self.partialID = partialID
+        public init(_ id: String) {
+            self.id = id
         }
         
         public func compile() -> [RawEnginePiece] {
             Array {
-                RawEnginePiece("Components.\(partialID)Trigger")
+                RawEnginePiece("Components.\(id)")
             }
         }
     }
 }
 
 extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
-    public static let onPlay = Self("Play")
+    public static let onPlay = Self("PlayTrigger")
+    public static let onDidDamage = Self("DamageTrigger")
 }
 
 // MARK: ApplyBuff
@@ -330,7 +330,7 @@ extension ComponentGroups {
     }
 }
 
-extension ComponentGroup {
+extension EnginePieceGroup {
     public typealias ApplyBuff = ComponentGroups.ApplyBuff
 }
 
@@ -347,7 +347,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -364,7 +364,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -381,7 +381,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -398,7 +398,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -415,7 +415,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -432,7 +432,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -449,7 +449,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -466,7 +466,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -483,7 +483,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -500,7 +500,7 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
 
@@ -517,6 +517,6 @@ extension ComponentGroup {
 //      }
 //  }
 //
-//  extension ComponentGroup {
+//  extension EnginePieceGroup {
 //      public typealias <#ComponentGroup#> = ComponentGroups.<#ComponentGroup#>
 //  }
