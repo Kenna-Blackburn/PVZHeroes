@@ -1,5 +1,7 @@
 
-#  PVZHeroes for Swift
+# PVZHeroes for Swift
+
+## Usage
 
 ```swift
 struct MyMod: Mod {
@@ -27,7 +29,7 @@ struct BeserkerWallNut: Card {
         HealthAttack()
         
         UniqueAbilities {
-            UniqueAbility(trigger: .onPlay) {
+            UniqueAbility(trigger: .onCardPlayed) {
                 Guard.TriggerTarget(IsSelf())
                 
                 ApplyBuff(0, 1)
@@ -38,3 +40,9 @@ struct BeserkerWallNut: Card {
 
 try MyMod().compile(to: .downloadsDirectory.appending(path: "pvzh1")) // partially implemented
 ```
+
+## Contributions
+
+### Style Guide
+
+* Prefer UI names to internal names (ex. prefer Strength to Attack).
