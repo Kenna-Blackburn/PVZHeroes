@@ -1,5 +1,5 @@
 //
-//  Aggregators+CardsData.swift
+//  CardData.swift
 //  PVZHeroes
 //
 //  Created by Kenna Blackburn on 2/14/26.
@@ -9,7 +9,7 @@ import Foundation
 import Helpers
 
 extension Aggregators {
-    public struct CardsData: Aggregator {
+    public struct CardData: Aggregator {
         public func aggregate(_ cache: CompilationCache, into root: FileWrapper) throws {
             guard let cards = cache[CompilationCache.Keys.Cards.self] else {
                 return

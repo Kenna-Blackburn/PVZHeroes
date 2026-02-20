@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import Helpers
 
 extension FilterGroups.Guard {
     // TODO: rename?
     public struct TriggerSource: FilterGroup {
         public var query: any Query
         
-        public init(_ query: any Query) {
-            self.query = query
+        public init(_ query: () -> any Query) {
+            self.query = query()
         }
         
         public var filters: [any FilterGroup] {

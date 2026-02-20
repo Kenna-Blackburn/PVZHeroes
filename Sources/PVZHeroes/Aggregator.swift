@@ -13,6 +13,6 @@ public protocol Aggregator: Sendable {
 
 public enum Aggregators {
     public static let catalog: [any Aggregator] = [
-        CardsData(),
+        CardData(),
     ]
 }

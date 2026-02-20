@@ -30,7 +30,11 @@ struct BeserkerWallNut: Card {
         
         UniqueAbilities {
             UniqueAbility(trigger: .onCardPlayed) {
-                Guard.TriggerTarget(IsSelf())
+                Guard.TriggerTarget {
+                    IsSelf()
+                }
+                
+                SelectSelf() // not implemented
                 
                 ApplyBuff(0, 1)
             }
