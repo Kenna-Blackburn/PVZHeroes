@@ -49,4 +49,5 @@ try MyMod().compile(to: .downloadsDirectory.appending(path: "pvzh1")) // partial
 
 ### Style Guide
 
-* Prefer UI names to internal names (ex. prefer Strength to Attack).
+* Prefer UI names over internal names (ex. prefer Strength over Attack).
+* Prefer to unwrap closures at usage over init (ie. prefer `var foo: () -> T` over `var foo: T`) (TODO)

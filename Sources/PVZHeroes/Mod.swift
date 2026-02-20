@@ -15,30 +15,10 @@ public protocol Mod {
 
 extension Mod {
     public func compile(
-        using aggregators: [any Aggregator] = Aggregators.catalog,
-    ) throws -> FileWrapper {
-        let cache = CompilationCache()
-        let root = FileWrapper(directoryWithFileWrappers: [:])
-        root.preferredFilename = "files"
-        
-        modules.forEach({ $0.compile(into: cache) })
-        try aggregators.forEach({ try $0.aggregate(cache, into: root) })
-        
-        return root
-    }
-    
-    public func compile(
         to outputURL: URL,
-        using aggregators: [any Aggregator] = Aggregators.catalog,
-        shouldOverwrite: Bool = true,
+        using compiler: some Compiler = Compilers.Default(),
     ) throws {
-        if shouldOverwrite {
-            if FileManager.default.fileExists(atPath: outputURL.path()) {
-                try FileManager.default.removeItem(at: outputURL)
-            }
-        }
-        
-        let root = try compile(using: aggregators)
-        try root.write(to: outputURL, options: .atomic, originalContentsURL: nil)
+        let output = try compiler.compile(self).fileWrapper
+        try output.write(to: outputURL, options: .atomic, originalContentsURL: nil)
     }
 }
