@@ -13,10 +13,10 @@ public struct Folder: FileWrapperConvertible {
     
     public init(
         _ name: String,
-        @ArrayBuilder<any FileWrapperConvertible> children: () -> [any FileWrapperConvertible]
-    ) {
+        @ArrayBuilder<any FileWrapperConvertible> children: () throws -> [any FileWrapperConvertible]
+    ) rethrows {
         self.name = name
-        self.children = children()
+        self.children = try children()
     }
     
     public var fileWrapper: FileWrapper {

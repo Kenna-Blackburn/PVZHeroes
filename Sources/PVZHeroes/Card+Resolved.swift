@@ -17,6 +17,11 @@ public struct _Card_Resolved {
     public var guid: Int
     public var prefabID: String
     
+    public var name: String
+    public var description: String
+    public var summary: String
+    public var flavor: String
+    
     public var cost: Int
     public var strength: Int
     public var health: Int
@@ -26,6 +31,11 @@ public struct _Card_Resolved {
         
         self.guid = 0
         self.prefabID = ""
+        
+        self.name = ""
+        self.description = ""
+        self.summary = ""
+        self.flavor = ""
         
         self.cost = 0
         self.strength = 0

@@ -11,9 +11,9 @@ public struct File: FileWrapperConvertible {
     public var name: String
     public var data: Data
     
-    public init(_ name: String, data: () -> Data) {
+    public init(_ name: String, data: () throws -> Data) rethrows {
         self.name = name
-        self.data = data()
+        self.data = try data()
     }
     
     public var fileWrapper: FileWrapper {

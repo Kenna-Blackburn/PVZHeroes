@@ -17,11 +17,12 @@ struct BeserkerWallNut: Card {
         GUID(646)
         PrefabID("Primal Wall-Nut")
         
-        Name("Beserker Wall-Nut") // not implemented
+        Name("Beserker Wall-Nut")
         Description("""
         This attacks using its [h] instead of its [a].
         <b>When this does damage:</b> it gets [+1h].
-        """) // not implemented
+        """)
+        Flavor("He and Shieldcrusher Viking go way back.")
         
         Cost(4)
         Stats(0, 4)
@@ -42,7 +43,7 @@ struct BeserkerWallNut: Card {
     }
 }
 
-try MyMod().compile(to: .downloadsDirectory.appending(path: "pvzh1")) // partially implemented
+try MyMod().compile(to: .downloadsDirectory.appending(path: "pvzh1")) // does not encode to UAB as of now
 ```
 
 ## Contributions

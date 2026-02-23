@@ -13,10 +13,10 @@ extension Compilers {
         public init() {}
         
         public func compile(_ cache: CompilationCache) throws -> any FileWrapperConvertible {
-            Folder("files") {
-                Folder("cards") {
-                    Folder("card_data_1") {
-                        File("cards.json") {
+            try Folder("files") {
+                try Folder("cards") {
+                    try Folder("card_data_1") {
+                        try File("cards.json") {
                             guard let cards = cache[CompilationCache.Keys.Cards.self] else {
                                 return Data()
                             }
@@ -35,10 +35,43 @@ extension Compilers {
                                 ]
                             }
                             
-                            let data = try! JSONEncoder().encode(AnyEncodable(contents))
+                            let data = try JSONEncoder().encode(AnyEncodable(contents))
                             
                             return data
                         }
+                    }
+                }
+                
+                try Folder("loc") {
+                    try File("en_11") { // TODO: take in or fetch index
+                        var locTable = [String: String]()
+                        
+                        for card in cache[CompilationCache.Keys.Cards.self] ?? [] {
+                            locTable["\(card.prefabID)_name"] = card.name
+                            locTable["\(card.prefabID)_longDesc"] = card.description
+                            locTable["\(card.prefabID)_shortDesc"] = card.summary
+                            locTable["\(card.prefabID)_flavorText"] = card.flavor
+                        }
+                        
+                        let content = locTable
+                            .map { (key, value) in
+                                var value = value
+                                
+                                if value.contains(",") || value.contains("\"") {
+                                    value.replace("\"", with: "\"\"")
+                                    value.replace("\n", with: "\\n")
+                                    value = "\"\(value)\""
+                                }
+                                
+                                return "\(key),\(value)"
+                            }
+                            .joined(separator: "\n")
+                        
+                        guard let data = content.data(using: .utf8) else {
+                            throw EncodingError.invalidValue(content, .init(codingPath: [], debugDescription: "Failed to encode content"))
+                        }
+                        
+                        return data
                     }
                 }
             }
