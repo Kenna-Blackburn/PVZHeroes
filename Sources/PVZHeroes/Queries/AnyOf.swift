@@ -29,18 +29,3 @@ extension Queries {
 extension EnginePieceGroup {
     public typealias AnyOf = Queries.AnyOf
 }
-
-extension Array<any Query> {
-    // TODO: dry; see AllOf.swift
-    public func compositeAny() -> any Query {
-        guard let first = self.first else {
-            return Queries.AnyOf({ return [] })
-        }
-        
-        guard self.count > 1 else {
-            return first
-        }
-        
-        return Queries.AnyOf({ return self })
-    }
-}

@@ -26,5 +26,9 @@ extension RawComponent: ComponentGroup {
 }
 
 public enum ComponentGroups {
-    
+    public enum Select {}
+}
+
+extension EnginePieceGroup {
+    public typealias Select = ComponentGroups.Select
 }

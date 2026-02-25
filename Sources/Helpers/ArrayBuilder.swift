@@ -24,6 +24,14 @@ public enum ArrayBuilder<Element> {
     public static func buildArray(_ arrays: [[Element]]) -> [Element] {
         return arrays.flatMap({ $0 })
     }
+    
+    public static func buildEither(first array: [Element]) -> [Element] {
+        return array
+    }
+    
+    public static func buildEither(second array: [Element]) -> [Element] {
+        return array
+    }
 }
 
 extension Array {

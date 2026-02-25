@@ -26,9 +26,7 @@ extension RawFilter: FilterGroup {
 }
 
 public enum FilterGroups {
-    public enum Guard {
-        
-    }
+    public enum Guard {}
 }
 
 extension EnginePieceGroup {
