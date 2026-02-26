@@ -57,7 +57,7 @@ extension ComponentGroups.Select {
             RawComponent("Components.PrimaryTargetFilter", [
                 "SelectionType": selectionType.rawValue,
                 "NumTargets": maxTargets ?? 0,
-                "Query": query,
+                "Query": query.query,
                 
                 "TargetScopeType": sortedTargetScope == nil ? "All" : "Sorted",
                 "TargetScopeSortValue": sortedTargetScope?.value.rawValue ?? "None",

@@ -26,12 +26,17 @@ extension Compilers {
                             for card in cards {
                                 contents[String(card.guid)] = [
                                     "prefabName": card.prefabID,
-                                    "entity": [
-                                        "components": card.components,
-                                    ],
                                     "displaySunCost": card.cost,
                                     "displayAttack": card.strength,
                                     "displayHealth": card.health,
+                                    
+                                    "baseId": card.kind.baseID(for: card.faction),
+                                    
+                                    "color": card.class.id,
+                                    
+                                    "entity": [
+                                        "components": card.components,
+                                    ],
                                 ]
                             }
                             
@@ -46,11 +51,13 @@ extension Compilers {
                     try File("en_11") { // TODO: take in or fetch index
                         var locTable = [String: String]()
                         
-                        for card in cache[CompilationCache.Keys.Cards.self] ?? [] {
-                            locTable["\(card.prefabID)_name"] = card.name
-                            locTable["\(card.prefabID)_longDesc"] = card.description
-                            locTable["\(card.prefabID)_shortDesc"] = card.summary
-                            locTable["\(card.prefabID)_flavorText"] = card.flavor
+                        if let cards = cache[CompilationCache.Keys.Cards.self] {
+                            for card in cards {
+                                locTable["\(card.prefabID)_name"] = card.name
+                                locTable["\(card.prefabID)_longDesc"] = card.description
+                                locTable["\(card.prefabID)_shortDesc"] = card.summary
+                                locTable["\(card.prefabID)_flavorText"] = card.flavor
+                            }
                         }
                         
                         let content = locTable

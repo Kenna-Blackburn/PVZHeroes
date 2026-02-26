@@ -1,5 +1,5 @@
 //
-//  Faction+ComponentGroup.swift
+//  Faction.swift
 //  PVZHeroes
 //
 //  Created by Kenna Blackburn on 2/19/26.
@@ -7,9 +7,13 @@
 
 import Foundation
 
-extension Faction: ComponentGroup {
-    public init(_ faction: Faction) {
-        self = faction
+public enum Faction: String, ComponentGroup {
+    case plants = "Plants"
+    case zombies = "Zombies"
+    case boardAbility = "All"
+    
+    public init(_ base: Self) {
+        self = base
     }
     
     public var components: [any ComponentGroup] {
@@ -21,6 +25,10 @@ extension Faction: ComponentGroup {
         case .boardAbility:
             RawComponent("Components.BoardAbility")
         }
+        
+        RawComponent { resolved in
+            resolved.faction = self
+        }
     }
 }
 
@@ -30,4 +38,10 @@ extension ComponentGroups {
 
 extension EnginePieceGroup {
     public typealias Faction = ComponentGroups.Faction
+}
+
+extension Faction {
+    public func baseID(for kind: Kind) -> String {
+        return kind.baseID(for: self)
+    }
 }

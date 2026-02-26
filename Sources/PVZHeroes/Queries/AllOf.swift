@@ -20,7 +20,7 @@ extension Queries {
         
         public var query: RawQuery {
             RawQuery("Queries.CompositeAllQuery", [
-                "queries": queries.compactMap({ $0.compile().first }),
+                "queries": queries.compactMap({ $0.query }),
             ])
         }
     }

@@ -25,6 +25,10 @@ public enum ArrayBuilder<Element> {
         return arrays.flatMap({ $0 })
     }
     
+    public static func buildOptional(_ array: [Element]?) -> [Element] {
+        return array ?? []
+    }
+    
     public static func buildEither(first array: [Element]) -> [Element] {
         return array
     }

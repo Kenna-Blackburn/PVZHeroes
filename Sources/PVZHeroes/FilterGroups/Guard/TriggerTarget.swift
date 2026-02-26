@@ -19,7 +19,7 @@ extension FilterGroups.Guard {
         
         public var filters: [any FilterGroup] {
             RawFilter("Components.TriggerTargetFilter", [
-                "Query": query.compile().first!,
+                "Query": query.query,
             ])
         }
     }
