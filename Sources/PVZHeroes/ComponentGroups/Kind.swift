@@ -7,56 +7,56 @@
 
 import Foundation
 
-public enum Kind: ComponentGroup, Sendable {
+extension ComponentGroups {
+    public struct Kind: ComponentGroup {
+        public var kind: PVZHeroes.Kind
+        
+        public init(_ kind: PVZHeroes.Kind) {
+            self.kind = kind
+        }
+        
+        public var components: [any ComponentGroup] {
+            switch kind {
+            case .fighter:
+                EmptyComponentGroup()
+            case .trick(let trickKind):
+                RawComponent("Components.Burst")
+                
+                if trickKind == .isSuperpower || trickKind == .isSignatureSuperpower {
+                    RawComponent("Components.Superpower")
+                }
+                
+                if trickKind == .isSignatureSuperpower {
+                    RawComponent("Components.PrimarySuperpower")
+                }
+            case .environment:
+                RawComponent("Components.Environment")
+            }
+            
+            RawComponent { resolved in
+                resolved.kind = kind
+            }
+        }
+    }
+}
+
+extension EnginePieceGroup {
+    public typealias Kind = ComponentGroups.Kind
+}
+
+public enum Kind: Sendable {
     case fighter
     case trick(TrickKind?)
     case environment
     
-    public init(_ base: Self) {
-        self = base
-    }
-    
-    public var components: [any ComponentGroup] {
-        switch self {
-        case .fighter:
-            EmptyComponentGroup()
-        case .trick(let trickKind):
-            RawComponent("Components.Burst")
-            
-            if trickKind == .isSuperpower || trickKind == .isSignatureSuperpower {
-                RawComponent("Components.Superpower")
-            }
-            
-            if trickKind == .isSignatureSuperpower {
-                RawComponent("Components.PrimarySuperpower")
-            }
-        case .environment:
-            EmptyComponentGroup()
-        }
-        
-        RawComponent { resolved in
-            resolved.kind = self
-        }
-    }
-}
-
-extension Kind {
-    public static let trick: Self = .trick(nil)
-}
-
-extension Kind {
     public enum TrickKind: Sendable {
         case isSuperpower
         case isSignatureSuperpower
     }
 }
 
-extension ComponentGroups {
-    public typealias Kind = PVZHeroes.Kind
-}
-
-extension EnginePieceGroup {
-    public typealias Kind = ComponentGroups.Kind
+extension Kind {
+    public static let trick: Self = .trick(nil)
 }
 
 extension Kind {

@@ -7,21 +7,32 @@
 
 import Foundation
 
-public struct Class: ComponentGroup, Sendable {
+
+extension ComponentGroups {
+    public struct Class: ComponentGroup {
+        public var `class`: PVZHeroes.Class
+        
+        public init(_ `class`: PVZHeroes.Class) {
+            self.class = `class`
+        }
+        
+        public var components: [any ComponentGroup] {
+            RawComponent { resolved in
+                resolved.class = `class`
+            }
+        }
+    }
+}
+
+extension EnginePieceGroup {
+    public typealias Class = ComponentGroups.Class
+}
+
+public struct Class: Sendable {
     public var id: String
     
     public init(_ id: String) {
         self.id = id
-    }
-    
-    public init(_ base: Self) {
-        self = base
-    }
-    
-    public var components: [any ComponentGroup] {
-        RawComponent { resolved in
-            resolved.class = self
-        }
     }
 }
 
@@ -39,12 +50,4 @@ extension Class {
     public static let crazy: Self = .init("Madcap")
     public static let hearty: Self = .init("Hearty")
     public static let sneaky: Self = .init("Sneaky")
-}
-
-extension ComponentGroups {
-    public typealias Class = PVZHeroes.Class
-}
-
-extension EnginePieceGroup {
-    public typealias Class = ComponentGroups.Class
 }

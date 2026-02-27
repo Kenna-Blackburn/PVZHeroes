@@ -25,6 +25,8 @@ func client() async throws {
             PrefabID("Primal Wall-Nut")
 
             Faction(.plants)
+            Kind(.fighter)
+            Class(.guardian)
 
             Name("Beserker Wall-Nut")
             Description("""

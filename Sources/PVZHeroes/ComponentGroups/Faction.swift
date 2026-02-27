@@ -7,41 +7,37 @@
 
 import Foundation
 
-public enum Faction: String, ComponentGroup {
-    case plants = "Plants"
-    case zombies = "Zombies"
-    case boardAbility = "All"
-    
-    public init(_ base: Self) {
-        self = base
-    }
-    
-    public var components: [any ComponentGroup] {
-        switch self {
-        case .plants:
-            RawComponent("Components.Plants")
-        case .zombies:
-            RawComponent("Components.Zombies")
-        case .boardAbility:
-            RawComponent("Components.BoardAbility")
+extension ComponentGroups {
+    public struct Faction: ComponentGroup {
+        public var faction: PVZHeroes.Faction
+        
+        public init(_ faction: PVZHeroes.Faction) {
+            self.faction = faction
         }
         
-        RawComponent { resolved in
-            resolved.faction = self
+        public var components: [any ComponentGroup] {
+            switch faction {
+            case .plants:
+                RawComponent("Components.Plants")
+            case .zombies:
+                RawComponent("Components.Zombies")
+            case .boardAbility:
+                RawComponent("Components.BoardAbility")
+            }
+            
+            RawComponent { resolved in
+                resolved.faction = faction
+            }
         }
     }
-}
-
-extension ComponentGroups {
-    public typealias Faction = PVZHeroes.Faction
 }
 
 extension EnginePieceGroup {
     public typealias Faction = ComponentGroups.Faction
 }
 
-extension Faction {
-    public func baseID(for kind: Kind) -> String {
-        return kind.baseID(for: self)
-    }
+public enum Faction: String {
+    case plants = "Plants"
+    case zombies = "Zombies"
+    case boardAbility = "All"
 }
