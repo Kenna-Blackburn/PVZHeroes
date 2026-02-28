@@ -8,19 +8,19 @@
 import Foundation
 
 public protocol Query: EnginePieceGroup {
-    var query: RawQuery { get }
+    var rawQuery: RawQuery { get }
 }
 
 extension Query {
     public func compile() -> [RawEnginePiece] {
-        query.compile()
+        rawQuery.compile()
     }
 }
 
 public typealias RawQuery = RawEnginePiece
 
 extension RawQuery: Query {
-    public var query: RawQuery {
+    public var rawQuery: RawQuery {
         return self
     }
 }
@@ -30,7 +30,7 @@ public enum Queries {
 }
 
 extension Never: Query {
-    public var query: RawQuery {
+    public var rawQuery: RawQuery {
         fatalError()
     }
 }

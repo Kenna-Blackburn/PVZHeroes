@@ -25,10 +25,6 @@ extension RawFilter: FilterGroup {
     public var filters: [any FilterGroup] {}
 }
 
-public enum FilterGroups {
-    public enum Guard {}
-}
 
-extension EnginePieceGroup {
-    public typealias Guard = FilterGroups.Guard
-}
+
+

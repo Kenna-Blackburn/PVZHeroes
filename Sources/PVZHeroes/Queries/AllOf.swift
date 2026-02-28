@@ -18,9 +18,9 @@ extension Queries {
             self.queries = queries()
         }
         
-        public var query: RawQuery {
+        public var rawQuery: RawQuery {
             RawQuery("Queries.CompositeAllQuery", [
-                "queries": queries.compactMap({ $0.query }),
+                "queries": queries.compactMap({ $0.rawQuery }),
             ])
         }
     }

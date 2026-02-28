@@ -45,16 +45,16 @@ func client() async throws {
             
             UniqueAbilities {
                 UniqueAbility(trigger: .onCardDidDamage) {
-                    Guard.TriggerTarget {
+                    Guard(.triggerTarget) {
                         AllOf {
                             IsSelf()
                             IsAlive()
-                            WillTriggerEffects()
+                            WillTriggerAbilities()
                         }
                     }
                     
                     Select.Self()
-                    ApplyBuff(0, 1)
+                    BuffTarget(0, 1)
                 }
             }
         }
@@ -82,75 +82,61 @@ func client() async throws {
             
             UniqueAbilities {
                 UniqueAbility(trigger: .onRoundEnded) {
-                    RawFilter("Components.SelfEntityFilter", [
-                        "Query": {
-                            AllOf {
-                                RawQuery("Queries.FighterQuery")
-                                
-                                AnyOf {
-                                    WillTriggerEffects()
-                                    RawQuery("Queries.WillTriggerOnDeathEffectsQuery")
-                                }
+                    Guard(.`self`) {
+                        AllOf {
+                            IsFighter()
+                            
+                            AnyOf {
+                                WillTriggerAbilities()
+                                WillTriggerOnCardDestroyedAbilities()
                             }
-                            .query
-                        }()
-                    ])
+                        }
+                    }
                     
                     Select.Raw(selectionType: .random, maxTargets: 1) {
                         AllOf {
-                            RawQuery("Queries.HasComponentQuery", [
-                                "ComponentType": RawEnginePiece.type(completing: "Components.Zombie")
-                            ])
-                            
+                            HasComponent("Components.Zombie")
                             IsInPlay()
                         }
                     }
                     
-                    RawComponent("Components.DestroyCardEffectDescriptor")
+                    DestroyTarget()
                 }
                 
                 UniqueAbility(trigger: .onCardDestroyed) {
-                    Guard.TriggerTarget {
+                    Guard(.triggerTarget) {
                         AllOf {
-                            RawQuery("Queries.KilledByQuery", [
-                                "Query": IsSelf().query
-                            ])
+                            WasDestroyedBy {
+                                IsSelf()
+                            }
                             
-                            RawQuery("Queries.HasComponentQuery", [
-                                "ComponentType": RawEnginePiece.type(completing: "Components.Zombie")
-                            ])
+                            HasComponent("Components.Zombie")
                             
-                            RawQuery("Queries.FighterQuery")
+                            IsFighter()
                             
                             AnyOf {
-                                WillTriggerEffects()
-                                RawQuery("Queries.WillTriggerOnDeathEffectsQuery")
+                                WillTriggerAbilities()
+                                WillTriggerOnCardDestroyedAbilities()
                             }
                         }
                     }
                     
-                    RawFilter("Components.SelfEntityFilter", [
-                        "Query": {
-                            AllOf {
-                                RawQuery("Queries.FighterQuery")
-                                
-                                AnyOf {
-                                    WillTriggerEffects()
-                                    RawQuery("Queries.WillTriggerOnDeathEffectsQuery")
-                                }
+                    Guard(.`self`) {
+                        AllOf {
+                            IsFighter()
+                            
+                            AnyOf {
+                                WillTriggerAbilities()
+                                WillTriggerOnCardDestroyedAbilities()
                             }
-                            .query
-                        }()
-                    ])
+                        }
+                    }
                     
                     Select.Raw(selectionType: .all) {
                         RawQuery("Queries.SameLaneAsTargetQuery")
                     }
                     
-                    RawEffect("Components.CreateCardEffectDescriptor", [
-                        "CardGuid": 312,
-                        "ForceFaceDown": false,
-                    ])
+                    SummonCardInTargetLane(312)
                 }
             }
         }

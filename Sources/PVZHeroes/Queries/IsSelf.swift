@@ -9,7 +9,7 @@ import Foundation
 
 extension Queries {
     public struct IsSelf: Query {
-        public var query: RawQuery {
+        public var rawQuery: RawQuery {
             RawQuery("Queries.SelfQuery")
         }
     }

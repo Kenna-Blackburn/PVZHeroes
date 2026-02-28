@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  EmptyComponentGroup.swift
 //  PVZHeroes
 //
 //  Created by Kenna Blackburn on 2/25/26.

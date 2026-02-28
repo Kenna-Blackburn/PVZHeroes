@@ -44,6 +44,7 @@ extension EnginePieceGroup {
     public typealias Kind = ComponentGroups.Kind
 }
 
+// TODO: use struct over enum?
 public enum Kind: Equatable, Sendable {
     case fighter
     case trick(TrickKind?)

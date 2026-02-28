@@ -2,7 +2,7 @@
 //  IsInPlay.swift
 //  PVZHeroes
 //
-//  Created by Kenna Blackburn on 2/19/26.
+//  Created by Kenna Blackburn on 2/27/26.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ import Foundation
 extension Queries {
     // TODO: rename?
     public struct IsInPlay: Query {
-        public var query: RawQuery {
+        public var rawQuery: RawQuery {
             RawQuery("Queries.TargetableInPlayFighterQuery")
         }
     }

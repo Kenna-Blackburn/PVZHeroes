@@ -8,20 +8,20 @@
 import Foundation
 
 public protocol Effect: EnginePieceGroup {
-    var effect: RawEffect { get }
+    var rawEffect: RawEffect { get }
 }
 
 extension Effect {
     public func compile() -> [RawEnginePiece] {
-        effect.compile()
+        rawEffect.compile()
     }
 }
 
 public typealias RawEffect = RawEnginePiece
 
 extension RawEffect: Effect {
-    public var effect: RawEffect {
-        fatalError()
+    public var rawEffect: RawEffect {
+        return self
     }
 }
 
@@ -30,7 +30,7 @@ public enum Effects {
 }
 
 extension Never: Effect {
-    public var effect: RawEffect {
+    public var rawEffect: RawEffect {
         fatalError()
     }
 }

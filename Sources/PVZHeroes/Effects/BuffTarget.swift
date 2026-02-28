@@ -1,5 +1,5 @@
 //
-//  ApplyBuff.swift
+//  BuffTarget.swift
 //  PVZHeroes
 //
 //  Created by Kenna Blackburn on 2/19/26.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-extension ComponentGroups {
-    public struct ApplyBuff: ComponentGroup {
+extension Effects {
+    public struct BuffTarget: ComponentGroup {
         public var strength: Int
         public var health: Int
         public var duration: Duration
@@ -35,5 +35,5 @@ extension ComponentGroups {
 }
 
 extension EnginePieceGroup {
-    public typealias ApplyBuff = ComponentGroups.ApplyBuff
+    public typealias BuffTarget = Effects.BuffTarget
 }

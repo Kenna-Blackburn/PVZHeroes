@@ -22,6 +22,7 @@ extension ComponentGroups {
             self.init(children: children())
         }
         
+        // TODO: rewrite?
         public var components: [any ComponentGroup] {
             RawComponent("Components.EffectEntitiesDescriptor", [
                 "entities": children.enumerated().map { (i, child) in
