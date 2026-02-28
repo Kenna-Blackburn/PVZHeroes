@@ -16,14 +16,7 @@ extension ComponentGroups {
         }
         
         public var components: [any ComponentGroup] {
-            switch faction {
-            case .plants:
-                RawComponent("Components.Plants")
-            case .zombies:
-                RawComponent("Components.Zombies")
-            case .boardAbility:
-                RawComponent("Components.BoardAbility")
-            }
+            RawComponent(faction.componentPartialType)
             
             RawComponent { resolved in
                 resolved.faction = faction
@@ -36,8 +29,18 @@ extension EnginePieceGroup {
     public typealias Faction = ComponentGroups.Faction
 }
 
-public enum Faction: String {
-    case plants = "Plants"
-    case zombies = "Zombies"
-    case boardAbility = "All"
+public struct Faction: Equatable, Sendable {
+    public var id: String
+    public var componentPartialType: String
+    
+    public init(_ id: String, _ componentPartialType: String) {
+        self.id = id
+        self.componentPartialType = componentPartialType
+    }
+}
+
+extension Faction {
+    public static let plants: Self = .init("Plants", "Components.Plants")
+    public static let zombies: Self = .init("Zombies", "Components.Zombies")
+    public static let boardAbility: Self = .init("All", "Components.BoardAbility")
 }

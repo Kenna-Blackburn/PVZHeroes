@@ -62,15 +62,6 @@ extension Kind {
 extension Kind {
     public func baseID(for faction: Faction) -> String {
         switch faction {
-        case .plants, .boardAbility:
-            switch self {
-            case .fighter:
-                return "Base"
-            case .trick:
-                return "BasePlantOneTimeEffect"
-            case .environment:
-                return "BasePlantEnvironment"
-            }
         case .zombies:
             switch self {
             case .fighter:
@@ -79,6 +70,15 @@ extension Kind {
                 return "BaseZombieOneTimeEffect"
             case .environment:
                 return "BaseZombieEnvironmentbase"
+            }
+        default:
+            switch self {
+            case .fighter:
+                return "Base"
+            case .trick:
+                return "BasePlantOneTimeEffect"
+            case .environment:
+                return "BasePlantEnvironment"
             }
         }
     }

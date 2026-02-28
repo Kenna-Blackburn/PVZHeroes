@@ -13,8 +13,7 @@ public enum RawEnginePiece: Encodable, EnginePieceGroup {
     case sideEffect((inout Card.Resolved) -> Void)
     
     public init(_ partialType: String, _ data: [String: Any] = [:]) {
-        let type = "PvZCards.Engine.\(partialType), EngineLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
-        self = .encodable(type: type, data: data)
+        self = .encodable(type: Self.type(completing: partialType), data: data)
     }
     
     public init(_ sideEffect: @escaping (inout Card.Resolved) -> Void) {
@@ -46,5 +45,11 @@ public enum RawEnginePiece: Encodable, EnginePieceGroup {
         case .sideEffect(let sideEffect):
             sideEffect(&resolved)
         }
+    }
+}
+
+extension RawEnginePiece {
+    public static func type(completing partialType: String) -> String {
+        "PvZCards.Engine.\(partialType), EngineLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
     }
 }

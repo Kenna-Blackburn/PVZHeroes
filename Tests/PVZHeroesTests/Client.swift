@@ -15,6 +15,7 @@ func client() async throws {
         var modules: [any Module] {
             Cards {
                 BeserkerWallNut()
+                WitchHazel()
             }
         }
     }
@@ -35,7 +36,7 @@ func client() async throws {
             This attacks using its [h] instead of its [a].
             <b>When this does damage:</b> it gets [+1h].
             """)
-            Flavor("He and Shieldcrusher Viking go way back.")
+            Flavor("He insists Shieldcrusher Viking is his only worthy rival.")
             
             Cost(4)
             Stats(0, 4)
@@ -59,29 +60,101 @@ func client() async throws {
         }
     }
     
-    try MyMod().compile(to: .downloadsDirectory.appending(path: "pvzh1"))
-}
-
-@Test("Fetch card_data_1")
-func fetchCardData1() async throws {
-    let url = URL(string: "https://pvzheroes-live.ecs.popcap.com/assetbundles/android/1.64.39/cards/card_data_1")!
-    var req = URLRequest(url: url)
-    req.httpMethod = "GET"
-    req.setValue("gzip, identity", forHTTPHeaderField: "Accept-Encoding")
-    req.setValue("Keep-Alive, TE", forHTTPHeaderField: "Connection")
-    req.setValue("0", forHTTPHeaderField: "Content-Length")
-    req.setValue("pvzheroes-live.ecs.popcap.com", forHTTPHeaderField: "Host")
-    req.setValue("identity", forHTTPHeaderField: "TE")
-    req.setValue("BestHTTP", forHTTPHeaderField: "User-Agent")
-    
-    let session = URLSession(configuration: .ephemeral)
-    let (outputURL, response) = try await session.download(for: req) as! (URL, HTTPURLResponse)
-    
-    guard (200..<300).contains(response.statusCode) else {
-        throw URLError(.badServerResponse, userInfo: [
-            NSDebugDescriptionErrorKey: "Got \(response.statusCode)."
-        ])
+    struct WitchHazel: Card {
+        var components: [any ComponentGroup] {
+            GUID(638)
+            PrefabID("Witch Hazel")
+            
+            Faction(.plants)
+            Kind(.fighter)
+            
+            Class(.smarty)
+            Banner(.event)
+            
+            Name("Witch Hazel")
+            Description("""
+            <b>End of turn:</b> Destroy a random Zombie and make a [1a]/[1h] Puff-Shroom with [teamup] there.
+            """)
+            Flavor("Zombies are always trying to build a bridge out of her.")
+            
+            Cost(4)
+            Stats(0, 3)
+            
+            UniqueAbilities {
+                UniqueAbility(trigger: .onRoundEnded) {
+                    RawFilter("Components.SelfEntityFilter", [
+                        "Query": {
+                            AllOf {
+                                RawQuery("Queries.FighterQuery")
+                                
+                                AnyOf {
+                                    WillTriggerEffects()
+                                    RawQuery("Queries.WillTriggerOnDeathEffectsQuery")
+                                }
+                            }
+                            .query
+                        }()
+                    ])
+                    
+                    Select.Raw(selectionType: .random, maxTargets: 1) {
+                        AllOf {
+                            RawQuery("Queries.HasComponentQuery", [
+                                "ComponentType": RawEnginePiece.type(completing: "Components.Zombie")
+                            ])
+                            
+                            IsInPlay()
+                        }
+                    }
+                    
+                    RawComponent("Components.DestroyCardEffectDescriptor")
+                }
+                
+                UniqueAbility(trigger: .onCardDestroyed) {
+                    Guard.TriggerTarget {
+                        AllOf {
+                            RawQuery("Queries.KilledByQuery", [
+                                "Query": IsSelf().query
+                            ])
+                            
+                            RawQuery("Queries.HasComponentQuery", [
+                                "ComponentType": RawEnginePiece.type(completing: "Components.Zombie")
+                            ])
+                            
+                            RawQuery("Queries.FighterQuery")
+                            
+                            AnyOf {
+                                WillTriggerEffects()
+                                RawQuery("Queries.WillTriggerOnDeathEffectsQuery")
+                            }
+                        }
+                    }
+                    
+                    RawFilter("Components.SelfEntityFilter", [
+                        "Query": {
+                            AllOf {
+                                RawQuery("Queries.FighterQuery")
+                                
+                                AnyOf {
+                                    WillTriggerEffects()
+                                    RawQuery("Queries.WillTriggerOnDeathEffectsQuery")
+                                }
+                            }
+                            .query
+                        }()
+                    ])
+                    
+                    Select.Raw(selectionType: .all) {
+                        RawQuery("Queries.SameLaneAsTargetQuery")
+                    }
+                    
+                    RawEffect("Components.CreateCardEffectDescriptor", [
+                        "CardGuid": 312,
+                        "ForceFaceDown": false,
+                    ])
+                }
+            }
+        }
     }
     
-    print(outputURL)
+    try MyMod().compile(to: .downloadsDirectory.appending(path: "pvzh1"))
 }

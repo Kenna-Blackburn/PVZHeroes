@@ -45,7 +45,7 @@ extension Compilers.Default {
                 "displayAttack": card.strength,
                 "displayHealth": card.health,
                 
-                "faction": card.faction,
+                "faction": card.faction.id,
                 
                 "baseId": card.kind.baseID(for: card.faction),
                 "isFighter": card.kind == .fighter,

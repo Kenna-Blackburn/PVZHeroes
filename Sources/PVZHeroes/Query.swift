@@ -21,7 +21,7 @@ public typealias RawQuery = RawEnginePiece
 
 extension RawQuery: Query {
     public var query: RawQuery {
-        fatalError()
+        return self
     }
 }
 
