@@ -8,3 +8,8 @@
 import Foundation
 import Helpers
 
+// TODO: macro reorg
+// TODO: clean namespace?
+// TODO: prefer `() -> T` to `T`
+// TODO: encode to UAB
+// TODO: merge compilers

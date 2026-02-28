@@ -20,7 +20,12 @@ public struct _Card_Resolved {
     public var faction: Faction
     public var kind: Kind
     
+    // TODO: use Optionals?
+    // TODO: rename to avoid backticks?
     public var `class`: Class
+    public var set: Set
+    public var rarity: Rarity
+    public var banner: Banner
     
     public var name: String
     public var description: String
@@ -41,6 +46,9 @@ public struct _Card_Resolved {
         self.kind = .trick
         
         self.class = .none
+        self.set = .blank
+        self.rarity = .common
+        self.banner = .none
         
         self.name = ""
         self.description = ""

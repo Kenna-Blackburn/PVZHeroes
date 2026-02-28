@@ -44,7 +44,7 @@ extension EnginePieceGroup {
     public typealias Kind = ComponentGroups.Kind
 }
 
-public enum Kind: Sendable {
+public enum Kind: Equatable, Sendable {
     case fighter
     case trick(TrickKind?)
     case environment

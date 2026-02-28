@@ -11,6 +11,7 @@ extension ComponentGroups {
     public struct Description: ComponentGroup {
         public var description: String
         
+        // TODO: add custom String interpolation (ie. "...\(.health)...")?
         public init(_ description: String) {
             self.description = description
         }
