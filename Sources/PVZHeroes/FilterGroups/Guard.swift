@@ -10,16 +10,16 @@ import Foundation
 public enum FilterGroups {
     public struct Guard: FilterGroup {
         public var scope: Scope
-        public var query: any Query
+        public var query: () -> any Query
         
-        public init(_ scope: Scope, query: () -> any Query) {
+        public init(_ scope: Scope, query: @escaping () -> any Query) {
             self.scope = scope
-            self.query = query()
+            self.query = query
         }
         
         public var filters: [any FilterGroup] {
             RawFilter("Components.\(scope.id)", [
-                "Query": query.rawQuery,
+                "Query": query().rawQuery,
             ])
         }
     }

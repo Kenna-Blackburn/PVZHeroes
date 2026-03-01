@@ -9,6 +9,10 @@ import Foundation
 
 @resultBuilder
 public enum ArrayBuilder<Element> {
+    public static func buildExpression(_ void: Void) -> [Element] {
+        return []
+    }
+    
     public static func buildExpression(_ element: Element) -> [Element] {
         return [element]
     }

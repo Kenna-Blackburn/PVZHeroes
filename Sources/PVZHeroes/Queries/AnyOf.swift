@@ -10,17 +10,17 @@ import Helpers
 
 extension Queries {
     public struct AnyOf: Query {
-        public var queries: [any Query]
+        public var queries: () -> [any Query]
         
         public init(
-            @ArrayBuilder<any Query> _ queries: () -> [any Query],
+            @ArrayBuilder<any Query> _ queries: @escaping () -> [any Query],
         ) {
-            self.queries = queries()
+            self.queries = queries
         }
         
         public var rawQuery: RawQuery {
             RawQuery("Queries.CompositeAnyQuery", [
-                "queries": queries.compactMap({ $0.rawQuery }),
+                "queries": queries().compactMap({ $0.rawQuery }),
             ])
         }
     }

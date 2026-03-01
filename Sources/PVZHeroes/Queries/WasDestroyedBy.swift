@@ -9,15 +9,15 @@ import Foundation
 
 extension Queries {
     public struct WasDestroyedBy: Query {
-        public var query: any Query
+        public var query: () -> any Query
         
-        public init(_ query: () -> any Query) {
-            self.query = query()
+        public init(_ query: @escaping () -> any Query) {
+            self.query = query
         }
         
         public var rawQuery: RawQuery {
             RawQuery("Queries.KilledByQuery", [
-                "Query": query.rawQuery,
+                "Query": query().rawQuery,
             ])
         }
     }

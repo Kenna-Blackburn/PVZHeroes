@@ -29,11 +29,11 @@ extension ComponentGroups.Select {
         public var ordinal: Ordinal
         public var selectionType: SelectionType
         public var maxTargets: Int?
-        public var query: Query
+        public var query: () -> any Query
         
         public var sortedTargetScope: SortedTargetScope?
         
-        public var additionalTargetQuery: (any Query)?
+        public var additionalTargetQuery: (() -> any Query)?
         public var onlyApplyEffectsToAdditionalTargets: Bool
         
         public init(
@@ -42,17 +42,17 @@ extension ComponentGroups.Select {
             maxTargets: Int? = nil,
             sortedTargetScope: SortedTargetScope? = nil,
             onlyApplyEffectsToAdditionalTargets: Bool = false,
-            query: () -> Query,
+            query: @escaping () -> Query,
             additionalTargetQuery: (() -> any Query)? = nil,
         ) {
             self.ordinal = ordinal
             self.selectionType = selectionType
             self.maxTargets = maxTargets
-            self.query = query()
+            self.query = query
             
             self.sortedTargetScope = sortedTargetScope
             
-            self.additionalTargetQuery = additionalTargetQuery?()
+            self.additionalTargetQuery = additionalTargetQuery
             self.onlyApplyEffectsToAdditionalTargets = onlyApplyEffectsToAdditionalTargets
         }
         
@@ -60,14 +60,14 @@ extension ComponentGroups.Select {
             RawComponent("Components.\(ordinal.id)", [
                 "SelectionType": selectionType.rawValue,
                 "NumTargets": maxTargets ?? 0,
-                "Query": query.rawQuery,
+                "Query": query().rawQuery,
                 
                 "TargetScopeType": sortedTargetScope == nil ? "All" : "Sorted",
                 "TargetScopeSortValue": sortedTargetScope?.value.rawValue ?? "None",
                 "TargetScopeSortMethod": sortedTargetScope?.method.rawValue ?? "None",
                 
                 "AdditionalTargetType": additionalTargetQuery == nil ? "None" : "Query",
-                "AdditionalTargetQuery": additionalTargetQuery?.rawQuery as Any,
+                "AdditionalTargetQuery": additionalTargetQuery?().rawQuery as Any,
                 "OnlyApplyEffectsOnAdditionalTargets": onlyApplyEffectsToAdditionalTargets,
             ])
         }

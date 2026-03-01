@@ -106,12 +106,9 @@ func client() async throws {
                 UniqueAbility(trigger: .onCardDestroyed) {
                     Guard(.triggerTarget) {
                         AllOf {
-                            WasDestroyedBy {
-                                IsSelf()
-                            }
+                            WasDestroyedBy({ IsSelf() })
                             
                             HasComponent("Components.Zombie")
-                            
                             IsFighter()
                             
                             AnyOf {

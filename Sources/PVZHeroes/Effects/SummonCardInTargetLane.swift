@@ -12,7 +12,7 @@ extension Effects {
         public var guid: Int
         public var shouldPlaceInGravestone: Bool
         
-        init(_ guid: Int, shouldPlaceInGravestone: Bool = false) {
+        public init(_ guid: Int, shouldPlaceInGravestone: Bool = false) {
             self.guid = guid
             self.shouldPlaceInGravestone = shouldPlaceInGravestone
         }

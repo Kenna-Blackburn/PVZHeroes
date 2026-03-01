@@ -10,10 +10,7 @@ import Helpers
 
 // TODO: macro reorg
 // TODO: clean namespace?
-// TODO: prefer `() -> T` to `T`
 // TODO: encode to UAB
 // TODO: merge compilers
-// TODO: rename ComponentGroup.components to ComponentGroup.body
-// TODO: move body to EnginePieceGroup?
 
 // NOTE: do not trust the file header dates

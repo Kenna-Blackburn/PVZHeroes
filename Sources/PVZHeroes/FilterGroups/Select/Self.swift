@@ -9,8 +9,14 @@ import Foundation
 
 extension ComponentGroups.Select {
     public struct `Self`: ComponentGroup {
+        public var ordinal: Raw.Ordinal
+        
+        public init(ordinal: Raw.Ordinal = .primary) {
+            self.ordinal = ordinal
+        }
+        
         public var components: [any ComponentGroup] {
-            Select.Raw(selectionType: .all) {
+            Select.Raw(ordinal: ordinal, selectionType: .all) {
                 IsSelf()
             }
         }
