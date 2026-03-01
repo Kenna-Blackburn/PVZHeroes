@@ -21,8 +21,8 @@ extension ComponentGroups {
                 ],
             ])
             
-            RawComponent { resolved in
-                resolved.cost = cost
+            RawComponent { accumulating in
+                accumulating.cost = cost
             }
         }
     }

@@ -16,8 +16,8 @@ extension ComponentGroups {
         }
         
         public var components: [any ComponentGroup] {
-            RawComponent { resolved in
-                resolved.flavor = flavor
+            RawComponent { accumulating in
+                accumulating.flavor = flavor
             }
         }
     }

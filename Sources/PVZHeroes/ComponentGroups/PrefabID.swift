@@ -16,8 +16,8 @@ extension ComponentGroups {
         }
         
         public var components: [any ComponentGroup] {
-            RawComponent { resolved in
-                resolved.prefabID = prefabID
+            RawComponent { accumulating in
+                accumulating.prefabID = prefabID
             }
         }
     }

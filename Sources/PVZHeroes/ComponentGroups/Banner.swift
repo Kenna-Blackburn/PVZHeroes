@@ -10,34 +10,24 @@ import Foundation
 extension ComponentGroups {
     public struct Banner: ComponentGroup {
         public var banner: PVZHeroes.Banner
-        public var shouldInferSetAndRarity: Bool
         
-        public init(
-            _ banner: PVZHeroes.Banner,
-            inferSetAndRarity shouldInferSetAndRarity: Bool = true
-        ) {
+        public init(_ banner: PVZHeroes.Banner) {
             self.banner = banner
-            self.shouldInferSetAndRarity = shouldInferSetAndRarity
         }
         
         public var components: [any ComponentGroup] {
-            RawComponent { resolved in
-                resolved.banner = banner
-            }
-            
-            if shouldInferSetAndRarity {
-                Set(banner.associatedSet)
-                Rarity(banner.associatedRarity)
+            RawComponent { accumulating in
+                accumulating.banner = banner
+                
+                if accumulating.set == nil {
+                    Set(banner.associatedSet).compile(into: &accumulating)
+                }
+                
+                if accumulating.rarity == nil {
+                    Rarity(banner.associatedRarity).compile(into: &accumulating)
+                }
             }
         }
-    }
-}
-
-extension ComponentGroups.Banner {
-    public func doNotInferSetAndRarity() -> Self {
-        var copy = self
-        copy.shouldInferSetAndRarity = false
-        return copy
     }
 }
 
@@ -86,6 +76,4 @@ extension Banner {
     
     public static let event: Self = .init("Premium_Event", .premium, .event)
     public static let token: Self = .init("Token", .token, .token)
-    
-    public static let none: Self = .init("", .blank, .common)
 }

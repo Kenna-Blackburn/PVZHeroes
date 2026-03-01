@@ -16,8 +16,8 @@ extension ComponentGroups {
         }
         
         public var components: [any ComponentGroup] {
-            RawComponent { resolved in
-                resolved.set = set
+            RawComponent { accumulating in
+                accumulating.set = set
             }
         }
     }

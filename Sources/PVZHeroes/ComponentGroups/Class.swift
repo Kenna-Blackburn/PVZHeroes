@@ -22,8 +22,8 @@ extension ComponentGroups {
         }
         
         public var components: [any ComponentGroup] {
-            RawComponent { resolved in
-                resolved.class = `class`
+            RawComponent { accumulating in
+                accumulating.class = `class`
             }
         }
     }

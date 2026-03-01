@@ -18,8 +18,8 @@ extension ComponentGroups {
         public var components: [any ComponentGroup] {
             RawComponent(faction.componentPartialType)
             
-            RawComponent { resolved in
-                resolved.faction = faction
+            RawComponent { accumulating in
+                accumulating.faction = faction
             }
         }
     }

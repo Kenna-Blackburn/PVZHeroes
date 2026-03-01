@@ -23,8 +23,8 @@ extension ComponentGroups {
                 "CurrentDamage": 0,
             ])
             
-            RawComponent { resolved in
-                resolved.health = health
+            RawComponent { accumulating in
+                accumulating.health = health
             }
         }
     }

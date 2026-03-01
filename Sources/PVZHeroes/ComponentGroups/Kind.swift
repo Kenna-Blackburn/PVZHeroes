@@ -33,8 +33,8 @@ extension ComponentGroups {
                 RawComponent("Components.Environment")
             }
             
-            RawComponent { resolved in
-                resolved.kind = kind
+            RawComponent { accumulating in
+                accumulating.kind = kind
             }
         }
     }

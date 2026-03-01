@@ -10,13 +10,13 @@ import Helpers
 
 public enum RawEnginePiece: Encodable, EnginePieceGroup {
     case encodable(type: String, data: [String: Any])
-    case sideEffect((inout Card.Resolved) -> Void)
+    case sideEffect((inout Card.Resolved.Accumulating) -> Void)
     
     public init(_ partialType: String, _ data: [String: Any] = [:]) {
         self = .encodable(type: Self.type(completing: partialType), data: data)
     }
     
-    public init(_ sideEffect: @escaping (inout Card.Resolved) -> Void) {
+    public init(_ sideEffect: @escaping (inout Card.Resolved.Accumulating) -> Void) {
         self = .sideEffect(sideEffect)
     }
     
@@ -38,12 +38,12 @@ public enum RawEnginePiece: Encodable, EnginePieceGroup {
         return [self]
     }
     
-    public func compile(into resolved: inout Card.Resolved) {
+    public func compile(into accumulating: inout Card.Resolved.Accumulating) {
         switch self {
         case .encodable:
-            resolved.components.append(self)
+            accumulating.components.append(self)
         case .sideEffect(let sideEffect):
-            sideEffect(&resolved)
+            sideEffect(&accumulating)
         }
     }
 }

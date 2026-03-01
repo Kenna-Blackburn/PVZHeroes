@@ -22,8 +22,8 @@ extension ComponentGroups {
                 ],
             ])
             
-            RawComponent { resolved in
-                resolved.strength = strength
+            RawComponent { accumulating in
+                accumulating.strength = strength
             }
         }
     }

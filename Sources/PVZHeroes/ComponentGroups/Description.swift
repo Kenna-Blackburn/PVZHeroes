@@ -17,11 +17,11 @@ extension ComponentGroups {
         }
         
         public var components: [any ComponentGroup] {
-            RawComponent { resolved in
-                resolved.description = description
+            RawComponent { accumulating in
+                accumulating.description = description
                 
-                if resolved.summary.isEmpty {
-                    resolved.summary = description
+                if accumulating.summary == nil {
+                    accumulating.summary = description
                 }
             }
         }

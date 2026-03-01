@@ -54,9 +54,13 @@ extension Compilers.Default {
                 "isPrimaryPower": card.kind == .trick(.isSignatureSuperpower),
                 
                 "color": card.class.id,
+                
                 "set": card.set.id,
                 "rarity": card.rarity.id,
                 "setAndRarityKey": card.banner.id,
+                
+                "craftingBuy": card.collectionValue.sparksToCraft,
+                "craftingSell": card.collectionValue.sparksFromRecycling,
                 
                 "entity": [
                     "components": card.components,

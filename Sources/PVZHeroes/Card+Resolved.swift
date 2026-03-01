@@ -20,12 +20,13 @@ public struct _Card_Resolved {
     public var faction: Faction
     public var kind: Kind
     
-    // TODO: use Optionals?
-    // TODO: rename to avoid backticks?
     public var `class`: Class
+    
     public var set: Set
     public var rarity: Rarity
     public var banner: Banner
+    
+    public var collectionValue: CollectionValue
     
     public var name: String
     public var description: String
@@ -36,33 +37,96 @@ public struct _Card_Resolved {
     public var strength: Int
     public var health: Int
     
-    public init() {
-        self.components = []
+    public init(_ accumulating: Accumulating) {
+        self.components = accumulating.components
         
-        self.guid = 0
-        self.prefabID = ""
+        self.guid = accumulating.guid!
+        self.prefabID = accumulating.prefabID!
         
-        self.faction = .boardAbility
-        self.kind = .trick
+        self.faction = accumulating.faction!
+        self.kind = accumulating.kind!
         
-        self.class = .none
-        self.set = .blank
-        self.rarity = .common
-        self.banner = .none
+        self.class = accumulating.class!
         
-        self.name = ""
-        self.description = ""
-        self.summary = ""
-        self.flavor = ""
+        self.set = accumulating.set!
+        self.rarity = accumulating.rarity!
+        self.banner = accumulating.banner!
         
-        self.cost = 0
-        self.strength = 0
-        self.health = 0
+        self.collectionValue = accumulating.collectionValue!
+        
+        self.name = accumulating.name!
+        self.description = accumulating.description!
+        self.summary = accumulating.summary!
+        self.flavor = accumulating.flavor!
+        
+        self.cost = accumulating.cost!
+        self.strength = accumulating.strength!
+        self.health = accumulating.health!
     }
     
     public init(_ base: any Card) {
-        var resolved = Self()
-        base.compile().forEach({ $0.compile(into: &resolved) })
-        self = resolved
+        self.init(.init(base))
+    }
+}
+
+extension Card.Resolved {
+    public struct Accumulating {
+        public var components: [RawComponent]
+        
+        public var guid: Int?
+        public var prefabID: String?
+        
+        public var faction: Faction?
+        public var kind: Kind?
+        
+        public var `class`: Class?
+        
+        public var set: Set?
+        public var rarity: Rarity?
+        public var banner: Banner?
+        
+        public var collectionValue: CollectionValue?
+        
+        public var name: String?
+        public var description: String?
+        public var summary: String?
+        public var flavor: String?
+        
+        public var cost: Int?
+        public var strength: Int?
+        public var health: Int?
+        
+        public init() {
+            self.components = []
+            
+            self.guid = nil
+            self.prefabID = nil
+            
+            self.faction = nil
+            self.kind = nil
+            
+            self.class = nil
+            
+            self.set = nil
+            self.rarity = nil
+            self.banner = nil
+            
+            self.collectionValue = nil
+            
+            self.name = nil
+            self.description = nil
+            self.summary = nil
+            self.flavor = nil
+            
+            self.cost = nil
+            self.strength = nil
+            self.health = nil
+        }
+        
+        public init(_ base: any Card) {
+            var accumulating = Self()
+            base.compile(into: &accumulating)
+            self = accumulating
+        }
     }
 }

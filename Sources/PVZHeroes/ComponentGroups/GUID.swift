@@ -20,8 +20,8 @@ extension ComponentGroups {
                 "Guid": guid,
             ])
             
-            RawComponent { resolved in
-                resolved.guid = guid
+            RawComponent { accumulating in
+                accumulating.guid = guid
             }
         }
     }
