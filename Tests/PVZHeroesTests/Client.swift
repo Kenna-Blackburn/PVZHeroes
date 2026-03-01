@@ -16,6 +16,7 @@ func client() async throws {
             Cards {
                 BeserkerWallNut()
                 WitchHazel()
+                EvolutionaryLeap()
             }
         }
     }
@@ -154,42 +155,44 @@ func client() async throws {
             Cost(2)
             
             UniqueAbilities {
-                UniqueAbility(trigger: .onSelfPlayed) {
-                    RawEnginePiece("Components.TransformWithCreationSource")
-                    
-                    Select.Raw(selectionType: .manual) {
-                        AllOf {
-                            IsOfFaction(.zombies)
-                            IsInPlay()
-                        }
-                    }
-                    
-                    RawEffect("Components.TransformIntoCardFromSubsetEffectDescriptor", [
-                        "SubsetQuery": {
+                UniqueAbilityGroup {
+                    UniqueAbility(trigger: .onSelfPlayed) {
+                        RawEnginePiece("Components.TransformWithCreationSource")
+                        
+                        Select.Raw(selectionType: .manual) {
                             AllOf {
-                                Not({ HasComponent("Components.Superpower") })
-                                
                                 IsOfFaction(.zombies)
-                                IsFighter()
-                                
-                                RawQuery("Queries.SunCostPlusNComparisonQuery", [
-                                    "ComparisonOperator": "Equal",
-                                    "AdditionalCost": 1,
-                                ])
+                                IsInPlay()
                             }
-                            .rawQuery
-                        }()
-                    ])
-                }
-                
-                UniqueAbility(trigger: .onSelfPlayed) {
-                    RawEnginePiece("Components.TransformWithCreationSource")
-                    
-                    Select.Raw(selectionType: .manual) {
-                        IsHero(for: .zombies)
+                        }
+                        
+                        RawEffect("Components.TransformIntoCardFromSubsetEffectDescriptor", [
+                            "SubsetQuery": {
+                                AllOf {
+                                    Not({ HasComponent("Components.Superpower") })
+                                    
+                                    IsOfFaction(.zombies)
+                                    IsFighter()
+                                    
+                                    RawQuery("Queries.SunCostPlusNComparisonQuery", [
+                                        "ComparisonOperator": "Equal",
+                                        "AdditionalCost": 1,
+                                    ])
+                                }
+                                .rawQuery
+                            }()
+                        ])
                     }
                     
-                    DrawCard()
+                    UniqueAbility(trigger: .onSelfPlayed) {
+                        RawEnginePiece("Components.TransformWithCreationSource")
+                        
+                        Select.Raw(selectionType: .manual) {
+                            IsHero(for: .zombies)
+                        }
+                        
+                        DrawCard()
+                    }
                 }
             }
         }

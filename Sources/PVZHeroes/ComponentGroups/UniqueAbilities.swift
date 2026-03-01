@@ -10,27 +10,49 @@ import Helpers
 
 extension ComponentGroups {
     public struct UniqueAbilities: ComponentGroup {
-        public var children: () -> [UniqueAbility]
+        public var groups: () -> [UniqueAbilityGroup]
         
         public init(
-            @ArrayBuilder<UniqueAbility> _ children: @escaping () -> [UniqueAbility],
+            @ArrayBuilder<UniqueAbilityGroup> groups: @escaping () -> [UniqueAbilityGroup]
         ) {
-            self.children = children
+            self.groups = groups
+        }
+        
+        public init(
+            @ArrayBuilder<UniqueAbility> abilities: @escaping () -> [UniqueAbility]
+        ) {
+            self.init {
+                for ability in abilities() {
+                    UniqueAbilityGroup({ ability })
+                }
+            }
         }
         
         public var components: [any ComponentGroup] {
             RawComponent("Components.EffectEntitiesDescriptor", [
-                "entities": children().enumerated().map { (i, child) in
-                    [
-                        "components": AnyEnginePieceGroup.init(pieces: {
-                            RawComponent("Components.EffectEntityGrouping", [
-                                "AbilityGroupId": i,
-                            ])
-                            
-                            child
-                        }).compile(),
-                    ]
-                }
+                "entities": {
+                    groups()
+                        .enumerated()
+                        .map { (id, group) in
+                            [
+                                "components": {
+                                    AnyEnginePieceGroup(pieces: {
+                                        for ability in group.abilities() {
+                                            RawEnginePiece("EffectEntityGrouping", [
+                                                "AbilityGroupId": id,
+                                            ])
+                                            
+                                            RawComponent("Components.\(ability.trigger.id)")
+                                            ability.trigger.filter?().compile()
+                                            
+                                            ability.pieces().flatMap({ $0.compile() })
+                                        }
+                                    })
+                                    .compile()
+                                }()
+                            ]
+                        }
+                }()
             ])
         }
     }
@@ -41,7 +63,23 @@ extension EnginePieceGroup {
 }
 
 extension ComponentGroups.UniqueAbilities {
-    public struct UniqueAbility: ComponentGroup {
+    public struct UniqueAbilityGroup {
+        public var abilities: () -> [UniqueAbility]
+        
+        public init(
+            @ArrayBuilder<UniqueAbility> _ abilities: @escaping () -> [UniqueAbility]
+        ) {
+            self.abilities = abilities
+        }
+    }
+}
+
+extension EnginePieceGroup {
+    public typealias UniqueAbilityGroup = ComponentGroups.UniqueAbilities.UniqueAbilityGroup
+}
+
+extension ComponentGroups.UniqueAbilities {
+    public struct UniqueAbility {
         public var trigger: Trigger
         public var pieces: () -> [any EnginePieceGroup] // TODO: strengthen typing?
         
@@ -52,11 +90,6 @@ extension ComponentGroups.UniqueAbilities {
             self.trigger = trigger
             self.pieces = pieces
         }
-        
-        public var components: [any ComponentGroup] {
-            trigger
-            pieces().flatMap({ $0.compile() })
-        }
     }
 }
 
@@ -64,8 +97,8 @@ extension EnginePieceGroup {
     public typealias UniqueAbility = ComponentGroups.UniqueAbilities.UniqueAbility
 }
 
-extension ComponentGroups.UniqueAbilities.UniqueAbility {
-    public struct Trigger: ComponentGroup, Sendable {
+extension ComponentGroups.UniqueAbilities {
+    public struct Trigger: Sendable {
         public var id: String
         public var filter: (@Sendable () -> any FilterGroup)?
         
@@ -73,16 +106,10 @@ extension ComponentGroups.UniqueAbilities.UniqueAbility {
             self.id = id
             self.filter = filter
         }
-        
-        public var components: [any ComponentGroup] {
-            RawComponent("Components.\(id)")
-            
-            filter?().compile()
-        }
     }
 }
 
-extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
+extension ComponentGroups.UniqueAbilities.Trigger {
     public func filter(_ filter: @escaping @Sendable () -> any FilterGroup) -> Self {
         var copy = self
         copy.filter = filter
@@ -90,7 +117,7 @@ extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
     }
 }
 
-extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
+extension ComponentGroups.UniqueAbilities.Trigger {
     public static let onRoundStarted: Self = .init("TurnStartTrigger")
     public static let onTricksStarted: Self = .init("SurprisePhaseStartTrigger")
     public static let onCombatStartedHere: Self = .init("LaneCombatStartTrigger")
@@ -116,10 +143,10 @@ extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
     public static let onCardMoved: Self = .init("MoveTrigger")
 }
 
-extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
+extension ComponentGroups.UniqueAbilities.Trigger {
     public static let onSelfPlayed: Self = .onCardPlayed.filter {
-        Guard(.triggerTarget) {
-            IsSelf()
+        FilterGroups.Guard(.triggerTarget) {
+            Queries.IsSelf()
         }
     }
 }

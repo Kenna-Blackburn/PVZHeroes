@@ -11,6 +11,7 @@ import Helpers
 public struct AnyEnginePieceGroup: EnginePieceGroup {
     public var _compile: () -> [RawEnginePiece]
     
+    // TODO: avoid init(pieces:) collision
     public init(
         compile: @escaping () -> [RawEnginePiece],
     ) {
