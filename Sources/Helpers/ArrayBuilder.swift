@@ -21,6 +21,10 @@ public enum ArrayBuilder<Element> {
         return array
     }
     
+    public static func buildExpression(_ array: [Element]?) -> [Element] {
+        return array ?? []
+    }
+    
     public static func buildBlock(_ arrays: [Element]...) -> [Element] {
         return buildArray(arrays)
     }

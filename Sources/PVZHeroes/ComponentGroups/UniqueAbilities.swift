@@ -54,7 +54,7 @@ extension ComponentGroups.UniqueAbilities {
         }
         
         public var components: [any ComponentGroup] {
-            trigger.compile()
+            trigger
             pieces().flatMap({ $0.compile() })
         }
     }
@@ -65,18 +65,28 @@ extension EnginePieceGroup {
 }
 
 extension ComponentGroups.UniqueAbilities.UniqueAbility {
-    public struct Trigger: EnginePieceGroup, Sendable {
+    public struct Trigger: ComponentGroup, Sendable {
         public var id: String
+        public var filter: (@Sendable () -> any FilterGroup)?
         
-        public init(_ id: String) {
+        public init(_ id: String, filter: (@Sendable () -> any FilterGroup)? = nil) {
             self.id = id
+            self.filter = filter
         }
         
-        public func compile() -> [RawEnginePiece] {
-            Array {
-                RawEnginePiece("Components.\(id)")
-            }
+        public var components: [any ComponentGroup] {
+            RawComponent("Components.\(id)")
+            
+            filter?().compile()
         }
+    }
+}
+
+extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
+    public func filter(_ filter: @escaping @Sendable () -> any FilterGroup) -> Self {
+        var copy = self
+        copy.filter = filter
+        return copy
     }
 }
 
@@ -104,4 +114,12 @@ extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
     public static let onCardDestroyed: Self = .init("DiscardFromPlayTrigger")
     public static let onCardBuffed: Self = .init("BuffTrigger")
     public static let onCardMoved: Self = .init("MoveTrigger")
+}
+
+extension ComponentGroups.UniqueAbilities.UniqueAbility.Trigger {
+    public static let onSelfPlayed: Self = .onCardPlayed.filter {
+        Guard(.triggerTarget) {
+            IsSelf()
+        }
+    }
 }

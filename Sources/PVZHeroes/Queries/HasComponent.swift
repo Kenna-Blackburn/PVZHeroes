@@ -15,6 +15,14 @@ extension Queries {
             self.type = RawEnginePiece.type(completing: partialType)
         }
         
+        public init(_ piece: () -> any EnginePieceGroup) {
+            if case .encodable(let type, _) = piece().compile().first! {
+                self.type = type
+            } else {
+                fatalError("// TODO: throw")
+            }
+        }
+        
         public var rawQuery: RawQuery {
             RawQuery("Queries.HasComponentQuery", [
                 "ComponentType": type,

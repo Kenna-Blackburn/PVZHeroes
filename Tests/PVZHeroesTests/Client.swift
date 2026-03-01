@@ -95,7 +95,7 @@ func client() async throws {
                     
                     Select.Raw(selectionType: .random, maxTargets: 1) {
                         AllOf {
-                            HasComponent("Components.Zombie")
+                            IsOfFaction(.zombies)
                             IsInPlay()
                         }
                     }
@@ -108,7 +108,7 @@ func client() async throws {
                         AllOf {
                             WasDestroyedBy({ IsSelf() })
                             
-                            HasComponent("Components.Zombie")
+                            IsOfFaction(.zombies)
                             IsFighter()
                             
                             AnyOf {
@@ -133,7 +133,63 @@ func client() async throws {
                         RawQuery("Queries.SameLaneAsTargetQuery")
                     }
                     
-                    SummonCardInTargetLane(312)
+                    SummonCardInTargetLane(guid: 312)
+                }
+            }
+        }
+    }
+    
+    struct EvolutionaryLeap: Card {
+        var components: [any ComponentGroup] {
+            GUID(621)
+            PrefabID("Evolutionary Leap")
+            
+            Faction(.zombies)
+            Kind(.trick)
+            RawComponent("Components.Surprise")
+            
+            Class(.brainy)
+            Banner(.colossalSuperRare)
+            
+            Cost(2)
+            
+            UniqueAbilities {
+                UniqueAbility(trigger: .onSelfPlayed) {
+                    RawEnginePiece("Components.TransformWithCreationSource")
+                    
+                    Select.Raw(selectionType: .manual) {
+                        AllOf {
+                            IsOfFaction(.zombies)
+                            IsInPlay()
+                        }
+                    }
+                    
+                    RawEffect("Components.TransformIntoCardFromSubsetEffectDescriptor", [
+                        "SubsetQuery": {
+                            AllOf {
+                                Not({ HasComponent("Components.Superpower") })
+                                
+                                IsOfFaction(.zombies)
+                                IsFighter()
+                                
+                                RawQuery("Queries.SunCostPlusNComparisonQuery", [
+                                    "ComparisonOperator": "Equal",
+                                    "AdditionalCost": 1,
+                                ])
+                            }
+                            .rawQuery
+                        }()
+                    ])
+                }
+                
+                UniqueAbility(trigger: .onSelfPlayed) {
+                    RawEnginePiece("Components.TransformWithCreationSource")
+                    
+                    Select.Raw(selectionType: .manual) {
+                        IsHero(for: .zombies)
+                    }
+                    
+                    DrawCard()
                 }
             }
         }

@@ -12,6 +12,8 @@ extension Card {
 }
 
 public struct _Card_Resolved {
+    public var _sourceString: String
+    
     public var components: [RawComponent]
     
     public var guid: Int
@@ -38,30 +40,46 @@ public struct _Card_Resolved {
     public var health: Int
     
     public init(_ accumulating: Accumulating) {
+        self._sourceString = accumulating._sourceString
+        
         self.components = accumulating.components
         
-        self.guid = accumulating.guid!
-        self.prefabID = accumulating.prefabID!
+        // TODO: rename
+        func helper<T>(
+            _ keyPath: KeyPath<Card.Resolved.Accumulating, T?>,
+            _ label: String,
+            _ fallback: T,
+        ) -> T {
+            if let value = accumulating[keyPath: keyPath] {
+                return value
+            } else {
+                print("'\(accumulating._sourceString)' is missing a '\(label)'. Falling back to '\(fallback)'.")
+                return fallback
+            }
+        }
         
-        self.faction = accumulating.faction!
-        self.kind = accumulating.kind!
+        self.guid = helper(\.guid, "GUID", 0)
+        self.prefabID = helper(\.prefabID, "PrefabID", "")
         
-        self.class = accumulating.class!
+        self.faction = helper(\.faction, "Faction", .boardAbility)
+        self.kind = helper(\.kind, "Kind", .trick)
         
-        self.set = accumulating.set!
-        self.rarity = accumulating.rarity!
-        self.banner = accumulating.banner!
+        self.class = helper(\.class, "Class", .none)
         
-        self.collectionValue = accumulating.collectionValue!
+        self.set = helper(\.set, "Set", .basic)
+        self.rarity = helper(\.rarity, "Rarity", .common)
+        self.banner = helper(\.banner, "Banner", .basicCommon)
         
-        self.name = accumulating.name!
-        self.description = accumulating.description!
-        self.summary = accumulating.summary!
-        self.flavor = accumulating.flavor!
+        self.collectionValue = helper(\.collectionValue, "CollectionValue", .common)
         
-        self.cost = accumulating.cost!
-        self.strength = accumulating.strength!
-        self.health = accumulating.health!
+        self.name = helper(\.name, "Name", "")
+        self.description = helper(\.description, "Description", "")
+        self.summary = helper(\.summary, "Summary", "")
+        self.flavor = helper(\.flavor, "Flavor", "")
+        
+        self.cost = helper(\.cost, "Cost", 0)
+        self.strength = helper(\.strength, "Strength", 0)
+        self.health = helper(\.health, "Health", 0)
     }
     
     public init(_ base: any Card) {
@@ -71,6 +89,8 @@ public struct _Card_Resolved {
 
 extension Card.Resolved {
     public struct Accumulating {
+        public var _sourceString: String
+        
         public var components: [RawComponent]
         
         public var guid: Int?
@@ -96,7 +116,9 @@ extension Card.Resolved {
         public var strength: Int?
         public var health: Int?
         
-        public init() {
+        public init(_ sourceString: String) {
+            self._sourceString = sourceString
+            
             self.components = []
             
             self.guid = nil
@@ -124,7 +146,7 @@ extension Card.Resolved {
         }
         
         public init(_ base: any Card) {
-            var accumulating = Self()
+            var accumulating = Self(String(describing: type(of: base)))
             base.compile(into: &accumulating)
             self = accumulating
         }
