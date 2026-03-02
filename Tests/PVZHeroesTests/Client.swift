@@ -17,6 +17,7 @@ func client() async throws {
                 BeserkerWallNut()
                 WitchHazel()
                 EvolutionaryLeap()
+                KitchenSinkZombie()
                 Peacock()
             }
         }
@@ -48,7 +49,7 @@ func client() async throws {
             HealthAttack()
             
             UniqueAbilities {
-                UniqueAbility(trigger: .onCardDidDamage) {
+                TriggeredAbility(.onCardDidDamage) {
                     Guard(.triggerTarget) {
                         AllOf {
                             IsSelf()
@@ -85,7 +86,7 @@ func client() async throws {
             Stats(0, 3)
             
             UniqueAbilities {
-                UniqueAbility(trigger: .onRoundEnded) {
+                TriggeredAbility(.onRoundEnded) {
                     Guard(.`self`) {
                         AllOf {
                             IsFighter()
@@ -107,7 +108,7 @@ func client() async throws {
                     DestroyTarget()
                 }
                 
-                UniqueAbility(trigger: .onCardDestroyed) {
+                TriggeredAbility(.onCardDestroyed) {
                     Guard(.triggerTarget) {
                         AllOf {
                             WasDestroyedBy({ IsSelf() })
@@ -158,48 +159,91 @@ func client() async throws {
             Cost(2)
             
             UniqueAbilities {
-                UniqueAbilityGroup {
-                    UniqueAbility(trigger: .onSelfPlayed) {
-                        RawEnginePiece("Components.TransformWithCreationSource", [
-                            "SourceGuid": -1,
-                        ])
-                        
-                        Select.Raw(selectionType: .manual) {
-                            AllOf {
-                                IsOfFaction(.zombies)
-                                IsInPlay()
-                            }
+                TriggeredAbility(.onSelfPlayed) {
+                    RawEnginePiece("Components.TransformWithCreationSource", [
+                        "SourceGuid": -1,
+                    ])
+                    
+                    Select.Raw(selectionType: .manual) {
+                        AllOf {
+                            IsOfFaction(.zombies)
+                            IsInPlay()
                         }
-                        
-                        RawEffect("Components.TransformIntoCardFromSubsetEffectDescriptor", [
-                            "SubsetQuery": {
-                                AllOf {
-                                    Not({ HasComponent("Components.Superpower") })
-                                    
-                                    IsOfFaction(.zombies)
-                                    IsFighter()
-                                    
-                                    RawQuery("Queries.SunCostPlusNComparisonQuery", [
-                                        "ComparisonOperator": "Equal",
-                                        "AdditionalCost": 1,
-                                    ])
-                                }
-                                .rawQuery
-                            }()
-                        ])
                     }
                     
-                    UniqueAbility(trigger: .onSelfPlayed) {
-                        RawEnginePiece("Components.TransformWithCreationSource", [
-                            "SourceGuid": -1,
-                        ])
-                        
-                        Select.Raw(selectionType: .manual) {
-                            IsHero(for: .zombies)
-                        }
-                        
-                        DrawCard()
+                    RawEffect("Components.TransformIntoCardFromSubsetEffectDescriptor", [
+                        "SubsetQuery": {
+                            AllOf {
+                                Not({ HasComponent("Components.Superpower") })
+                                
+                                IsOfFaction(.zombies)
+                                IsFighter()
+                                
+                                RawQuery("Queries.SunCostPlusNComparisonQuery", [
+                                    "ComparisonOperator": "Equal",
+                                    "AdditionalCost": 1,
+                                ])
+                            }
+                            .rawQuery
+                        }()
+                    ])
+                }
+                .groupID(0)
+                
+                TriggeredAbility(.onSelfPlayed) {
+                    RawEnginePiece("Components.TransformWithCreationSource", [
+                        "SourceGuid": -1,
+                    ])
+                    
+                    Select.Raw(selectionType: .manual) {
+                        IsHero(for: .zombies)
                     }
+                    
+                    DrawCard()
+                }
+                .groupID(0)
+            }
+        }
+    }
+    
+    struct KitchenSinkZombie: Card {
+        var components: [any ComponentGroup] {
+            GUID(482)
+            PrefabID("Kitchen Sink Zombie")
+            
+            Faction(.zombies)
+            Kind(.fighter)
+            
+            Class(.brainy)
+            Banner(.event)
+            
+            Tribes(.professional, .mustache)
+            
+            Name("Kitchen Sink Zombie")
+            Description("[truestrike], [frenzy], [armored=1], [overshoot=2], [ambush=3]")
+            Flavor("He's got everything but the- no wait, he's got that too.")
+            
+            Cost(6)
+            Stats(3, 6)
+            
+            Bullseye()
+            Frenzy()
+            Armored()
+            
+            UniqueAbilities {
+                ContinuousAbility {
+                    Guard(.`self`) {
+                        AllOf {
+                            IsAlive()
+                            WillTriggerAbilities()
+                            RawQuery("Queries.InUnopposedLaneQuery")
+                        }
+                    }
+                    
+                    MarkEffectAsContinuous()
+                    
+                    Select.Self()
+                    BuffTarget(3, 0)
                 }
             }
         }
@@ -221,7 +265,7 @@ func client() async throws {
             Stats(3, 4)
             
             UniqueAbilities {
-                UniqueAbility(trigger: .onSelfPlayed) {
+                TriggeredAbility(.onSelfPlayed) {
                     Guard(.`self`) {
                         AllOf {
                             IsFighter()

@@ -10,45 +10,35 @@ import Helpers
 
 extension ComponentGroups {
     public struct UniqueAbilities: ComponentGroup {
-        public var groups: () -> [UniqueAbilityGroup]
+        public var abilities: () -> [any UniqueAbility]
         
         public init(
-            @ArrayBuilder<UniqueAbilityGroup> groups: @escaping () -> [UniqueAbilityGroup]
+            @ArrayBuilder<any UniqueAbility> abilities: @escaping () -> [any UniqueAbility]
         ) {
-            self.groups = groups
-        }
-        
-        public init(
-            @ArrayBuilder<UniqueAbility> abilities: @escaping () -> [UniqueAbility]
-        ) {
-            self.init {
-                for ability in abilities() {
-                    UniqueAbilityGroup({ ability })
-                }
-            }
+            self.abilities = abilities
         }
         
         public var components: [any ComponentGroup] {
             RawComponent("Components.EffectEntitiesDescriptor", [
                 "entities": {
-                    groups()
-                        .enumerated()
-                        .map { (id, group) in
+                    var nextFreeGroupID = 0
+                    return abilities()
+                        .map { ability in
                             [
                                 "components": {
-                                    AnyEnginePieceGroup(pieces: {
-                                        for ability in group.abilities() {
-                                            RawEnginePiece("EffectEntityGrouping", [
-                                                "AbilityGroupId": id,
-                                            ])
-                                            
-                                            RawComponent("Components.\(ability.trigger.id)")
-                                            ability.trigger.filter?().compile()
-                                            
-                                            ability.pieces().flatMap({ $0.compile() })
+                                    switch ability {
+                                    case var copy as TriggeredAbility:
+                                        if let groupID = copy.groupID {
+                                            nextFreeGroupID = groupID + 1
+                                        } else {
+                                            copy.groupID = nextFreeGroupID
+                                            nextFreeGroupID += 1
                                         }
-                                    })
-                                    .compile()
+                                        
+                                        return copy.compile()
+                                    default:
+                                        return ability.compile()
+                                    }
                                 }()
                             ]
                         }
@@ -63,38 +53,75 @@ extension EnginePieceGroup {
 }
 
 extension ComponentGroups.UniqueAbilities {
-    public struct UniqueAbilityGroup {
-        public var abilities: () -> [UniqueAbility]
+    public protocol UniqueAbility: EnginePieceGroup {
         
-        public init(
-            @ArrayBuilder<UniqueAbility> _ abilities: @escaping () -> [UniqueAbility]
-        ) {
-            self.abilities = abilities
-        }
     }
 }
 
-extension EnginePieceGroup {
-    public typealias UniqueAbilityGroup = ComponentGroups.UniqueAbilities.UniqueAbilityGroup
-}
-
 extension ComponentGroups.UniqueAbilities {
-    public struct UniqueAbility {
+    public struct TriggeredAbility: UniqueAbility {
+        public var groupID: Int?
         public var trigger: Trigger
         public var pieces: () -> [any EnginePieceGroup] // TODO: strengthen typing?
         
         public init(
-            trigger: Trigger,
+            _ trigger: Trigger,
+            groupID: Int? = nil,
             @ArrayBuilder<any EnginePieceGroup> _ pieces: @escaping () -> [any EnginePieceGroup],
         ) {
             self.trigger = trigger
             self.pieces = pieces
         }
+        
+        public func compile() -> [RawEnginePiece] {
+            AnyEnginePieceGroup(pieces: {
+                if let groupID {
+                    RawEnginePiece("Components.EffectEntityGrouping", [
+                        "AbilityGroupId": groupID,
+                    ])
+                }
+                
+                RawEnginePiece("Components.\(trigger.id)")
+                trigger.filter?().compile()
+                
+                pieces().flatMap({ $0.compile() })
+            })
+            .compile()
+        }
+    }
+}
+
+extension ComponentGroups.UniqueAbilities.TriggeredAbility {
+    public func groupID(_ groupID: Int?) -> Self {
+        var copy = self
+        copy.groupID = groupID
+        return copy
     }
 }
 
 extension EnginePieceGroup {
-    public typealias UniqueAbility = ComponentGroups.UniqueAbilities.UniqueAbility
+    public typealias TriggeredAbility = ComponentGroups.UniqueAbilities.TriggeredAbility
+}
+
+extension ComponentGroups.UniqueAbilities {
+    public struct ContinuousAbility: UniqueAbility {
+        public var pieces: () -> [any EnginePieceGroup] // TODO: strengthen typing?
+        
+        public init(
+            @ArrayBuilder<any EnginePieceGroup> _ pieces: @escaping () -> [any EnginePieceGroup],
+        ) {
+            self.pieces = pieces
+        }
+        
+        public func compile() -> [RawEnginePiece] {
+            AnyEnginePieceGroup(pieces: pieces)
+                .compile()
+        }
+    }
+}
+
+extension EnginePieceGroup {
+    public typealias ContinuousAbility = ComponentGroups.UniqueAbilities.ContinuousAbility
 }
 
 extension ComponentGroups.UniqueAbilities {
