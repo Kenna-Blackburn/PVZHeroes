@@ -17,6 +17,7 @@ func client() async throws {
                 BeserkerWallNut()
                 WitchHazel()
                 EvolutionaryLeap()
+                Peacock()
             }
         }
     }
@@ -31,6 +32,8 @@ func client() async throws {
             
             Class(.guardian)
             Banner(.premiumUncommon)
+            
+            Tribes(.nut)
             
             Name("Beserker Wall-Nut")
             Description("""
@@ -157,7 +160,9 @@ func client() async throws {
             UniqueAbilities {
                 UniqueAbilityGroup {
                     UniqueAbility(trigger: .onSelfPlayed) {
-                        RawEnginePiece("Components.TransformWithCreationSource")
+                        RawEnginePiece("Components.TransformWithCreationSource", [
+                            "SourceGuid": -1,
+                        ])
                         
                         Select.Raw(selectionType: .manual) {
                             AllOf {
@@ -185,7 +190,9 @@ func client() async throws {
                     }
                     
                     UniqueAbility(trigger: .onSelfPlayed) {
-                        RawEnginePiece("Components.TransformWithCreationSource")
+                        RawEnginePiece("Components.TransformWithCreationSource", [
+                            "SourceGuid": -1,
+                        ])
                         
                         Select.Raw(selectionType: .manual) {
                             IsHero(for: .zombies)
@@ -193,6 +200,74 @@ func client() async throws {
                         
                         DrawCard()
                     }
+                }
+            }
+        }
+    }
+    
+    // https://www.reddit.com/r/PvZHeroes/comments/1rhmh3z/plant_card_idea_peacock/
+    struct Peacock: Card {
+        var components: [any ComponentGroup] {
+            GUID(10)
+            PrefabID("43d3b20a-90b4-4a34-8d55-674b02a38dc1")
+            
+            Faction(.plants)
+            Kind(.fighter)
+            
+            Class(.megaGrow)
+            Banner(.premiumLegendary)
+            
+            Cost(3)
+            Stats(3, 4)
+            
+            UniqueAbilities {
+                UniqueAbility(trigger: .onSelfPlayed) {
+                    Guard(.`self`) {
+                        AllOf {
+                            IsFighter()
+                            
+                            AnyOf {
+                                WillTriggerAbilities()
+                                WillTriggerOnCardDestroyedAbilities()
+                            }
+                        }
+                    }
+                    
+                    RawEnginePiece("Components.QueryEntityCondition", [
+                        "Finder": {
+                            AllOf {
+                                IsInPlay()
+                                IsOfFaction(.plants)
+                                
+                                RawQuery("Queries.SubtypeQuery", [
+                                    "Subtype": 0
+                                ])
+                            }
+                            .rawQuery
+                        }(),
+                        "ConditionEvaluationType": "Any",
+                        "Query": {
+                            RawQuery("Queries.InAdjacentLaneQuery", [
+                                "Side": "Either",
+                            ])
+                            .rawQuery
+                        }(),
+                    ])
+                    
+                    Select.Raw(selectionType: .all) {
+                        IsHero(for: .plants)
+                    }
+                    
+                    RawEffect("Components.DrawCardFromSubsetEffectDescriptor", [
+                        "DrawAmount": 1,
+                        "SubsetQuery": {
+                            AllOf {
+                                HasComponent("Components.Superpower")
+                                IsOfFaction(.plants)
+                            }
+                            .rawQuery
+                        }(),
+                    ])
                 }
             }
         }

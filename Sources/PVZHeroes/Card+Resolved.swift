@@ -28,6 +28,9 @@ public struct _Card_Resolved {
     public var rarity: Rarity
     public var banner: Banner
     
+    public var tribes: [Tribe]
+    public var tags: [Tag]
+    
     public var collectionValue: CollectionValue
     
     public var name: String
@@ -70,6 +73,9 @@ public struct _Card_Resolved {
         self.rarity = helper(\.rarity, "Rarity", .common)
         self.banner = helper(\.banner, "Banner", .basicCommon)
         
+        self.tribes = helper(\.tribes, "Tribes", [])
+        self.tags = helper(\.tags, "Tags", [])
+        
         self.collectionValue = helper(\.collectionValue, "CollectionValue", .common)
         
         self.name = helper(\.name, "Name", "")
@@ -105,6 +111,9 @@ extension Card.Resolved {
         public var rarity: Rarity?
         public var banner: Banner?
         
+        public var tribes: [Tribe]?
+        public var tags: [Tag]?
+        
         public var collectionValue: CollectionValue?
         
         public var name: String?
@@ -132,6 +141,9 @@ extension Card.Resolved {
             self.set = nil
             self.rarity = nil
             self.banner = nil
+            
+            self.tribes = nil
+            self.tags = nil
             
             self.collectionValue = nil
             
