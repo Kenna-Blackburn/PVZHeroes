@@ -21,6 +21,10 @@ extension ComponentGroups {
                     "BaseValue": value,
                 ],
             ])
+            
+            RawComponent { accumulating in
+                accumulating.traitIDs.append("Armor")
+            }
         }
     }
 }

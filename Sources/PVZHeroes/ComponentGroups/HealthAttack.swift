@@ -19,6 +19,10 @@ extension ComponentGroups {
             RawComponent("Components.AttackOverride", [
                 "Counters": counters,
             ])
+            
+            RawComponent { accumulating in
+                accumulating.traitIDs.append("AttackOverride")
+            }
         }
     }
 }

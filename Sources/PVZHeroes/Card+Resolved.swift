@@ -15,6 +15,7 @@ public struct _Card_Resolved {
     public var _sourceString: String
     
     public var components: [RawComponent]
+    public var traitIDs: [String]
     
     public var guid: Int
     public var prefabID: String
@@ -43,10 +44,6 @@ public struct _Card_Resolved {
     public var health: Int
     
     public init(_ accumulating: Accumulating) {
-        self._sourceString = accumulating._sourceString
-        
-        self.components = accumulating.components
-        
         // TODO: rename
         func helper<T>(
             _ keyPath: KeyPath<Card.Resolved.Accumulating, T?>,
@@ -60,6 +57,11 @@ public struct _Card_Resolved {
                 return fallback
             }
         }
+        
+        self._sourceString = accumulating._sourceString
+        
+        self.components = accumulating.components
+        self.traitIDs = accumulating.traitIDs
         
         self.guid = helper(\.guid, "GUID", 0)
         self.prefabID = helper(\.prefabID, "PrefabID", "")
@@ -98,6 +100,7 @@ extension Card.Resolved {
         public var _sourceString: String
         
         public var components: [RawComponent]
+        public var traitIDs: [String]
         
         public var guid: Int?
         public var prefabID: String?
@@ -129,6 +132,7 @@ extension Card.Resolved {
             self._sourceString = sourceString
             
             self.components = []
+            self.traitIDs = []
             
             self.guid = nil
             self.prefabID = nil

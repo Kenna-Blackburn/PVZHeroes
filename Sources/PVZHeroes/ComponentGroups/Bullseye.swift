@@ -19,6 +19,10 @@ extension ComponentGroups {
             RawComponent("Components.Truestrike", [
                 "Counters": counters,
             ])
+            
+            RawComponent { accumulating in
+                accumulating.traitIDs.append("Truestrike")
+            }
         }
     }
 }

@@ -65,6 +65,8 @@ extension Compilers.Default {
                 "entity": [
                     "components": card.components,
                 ],
+                
+                "special_abilities": card.traitIDs,
             ]
         }
         

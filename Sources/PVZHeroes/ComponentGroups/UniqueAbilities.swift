@@ -44,6 +44,10 @@ extension ComponentGroups {
                         }
                 }()
             ])
+            
+            RawComponent { accumulating in
+                accumulating.traitIDs.append("Unique")
+            }
         }
     }
 }
